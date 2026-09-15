@@ -3,6 +3,7 @@
   import Icon from './Icon.svelte';
 
   export let show = false;
+  export let currentLanguage = 'en';
   export let onClose = () => {};
 
   let spinning = false;
@@ -12,6 +13,10 @@
   let spinsToday = 0;
   let spinErrorMsg = '';
   let copied = false;
+  $: isAmharic = currentLanguage === 'am';
+  $: spinLabels = isAmharic
+    ? { title: 'የEasyService ዕድል መሽከርከሪያ', spins: 'የዛሬ መሽከርከሪያ', next: 'ቀጣይ መሽከርከሪያ', free: 'ነፃ (የመጀመሪያ 3)', wallet: 'የኪስ ቦርሳ', limit: 'የዕለት መሽከርከሪያ ገደብ ደርሷል። ነገ እንደገና ይሞክሩ!', spin: 'አሁን ይሽከርከሩ', spinning: 'እየተሽከረከረ ነው...', copied: 'ተቀድቷል!' }
+    : { title: 'EasyService Lucky Spin Wheel', spins: 'Spins Today', next: 'Next Spin', free: 'FREE (First 3)', wallet: 'Wallet', limit: 'Daily spin limit reached (15/15 spins used today). Please try again tomorrow!', spin: 'SPIN NOW', spinning: 'Spinning Wheel...', copied: 'Copied!' };
 
   // 6 Sectors array
   const sectors = [
@@ -31,7 +36,7 @@
     copied = false;
 
     if (spinsToday >= 15) {
-      spinErrorMsg = 'Daily spin limit reached (15/15 spins used today). Please try again tomorrow!';
+      spinErrorMsg = spinLabels.limit;
       return;
     }
 
@@ -121,19 +126,19 @@
       <div class="modal-header">
         <div class="modal-title-row">
           <Icon name="promo" size={22} color="var(--accent-gold)" />
-          <h2>EasyService Lucky Spin Wheel</h2>
+          <h2>{spinLabels.title}</h2>
         </div>
         <button class="close-btn" on:click={onClose}>✕</button>
       </div>
 
       <!-- Tiered Rules Banner -->
       <div class="rules-bar">
-        <span class="rule-chip">Spins Today: <strong>{spinsToday}/15</strong></span>
+        <span class="rule-chip">{spinLabels.spins}: <strong>{spinsToday}/15</strong></span>
         <span class="rule-chip cost-chip">
-          Next Spin: <strong>{currentSpinCost === 0 ? 'FREE (First 3)' : `ETB ${currentSpinCost}`}</strong>
+          {spinLabels.next}: <strong>{currentSpinCost === 0 ? spinLabels.free : `ETB ${currentSpinCost}`}</strong>
         </span>
         <span class="rule-chip wallet-chip">
-          Wallet: <strong>ETB {$currentUser?.balance?.toLocaleString() || 0}</strong>
+          {spinLabels.wallet}: <strong>ETB {$currentUser?.balance?.toLocaleString() || 0}</strong>
         </span>
       </div>
 
@@ -164,7 +169,7 @@
                 font-weight="800" 
                 text-anchor="middle" 
                 transform="rotate({textAngle + 90}, 100, 100)">
-                {s.text.split(' ')[0]} {s.text.split(' ')[1] || ''}
+                {isAmharic ? ({ NO_LUCK_1: 'እንደገና ይሞክሩ', EASY5: '5% ቅናሽ', NO_LUCK_2: 'ነገ ይሞክሩ', WIN10: '10% ቅናሽ', NO_LUCK_3: 'እድል ይሞክሩ', GOLD25: '25% ትልቅ ቅናሽ' }[s.id]) : `${s.text.split(' ')[0]} ${s.text.split(' ')[1] || ''}`}
               </text>
             {/each}
             <circle cx="100" cy="100" r="22" fill="var(--bg-surface)" stroke="var(--accent-gold)" stroke-width="3"/>
@@ -175,8 +180,8 @@
       {#if wonResult}
         {#if wonResult.type === 'NONE'}
           <div class="result-card result-no-luck animate-fade-in">
-            <span class="result-tag">BETTER LUCK NEXT TIME</span>
-            <p class="result-desc">No discount won this spin. Try again for another chance!</p>
+            <span class="result-tag">{isAmharic ? 'በሚቀጥለው ጊዜ መልካም ዕድል' : 'BETTER LUCK NEXT TIME'}</span>
+            <p class="result-desc">{isAmharic ? 'በዚህ መሽከርከሪያ ቅናሽ አላሸነፉም። እንደገና ይሞክሩ!' : 'No discount won this spin. Try again for another chance!'}</p>
           </div>
         {:else}
           <div class="result-card result-win animate-fade-in">
@@ -184,7 +189,7 @@
             <div class="code-copy-box">
               <span class="win-code">{generatedUniqueCode}</span>
               <button class="copy-btn" on:click={handleCopyCode}>
-                {copied ? '✓ Copied!' : '📋 Copy Code'}
+                {copied ? `✓ ${spinLabels.copied}` : (isAmharic ? '📋 ኮዱን ቅዳ' : '📋 Copy Code')}
               </button>
             </div>
             <span class="win-desc">Get <strong>{wonResult.percent}% OFF</strong> on your next checkout! Use code during booking.</span>
@@ -194,7 +199,7 @@
 
       <div class="modal-actions-bar">
         <button class="btn-gold spin-btn" on:click={spinWheel} disabled={spinning}>
-          {spinning ? 'Spinning Wheel...' : (currentSpinCost === 0 ? '🎰 SPIN NOW (FREE)' : `🎰 SPIN NOW (-ETB ${currentSpinCost})`)}
+          {spinning ? `🎰 ${spinLabels.spinning}` : (currentSpinCost === 0 ? `🎰 ${spinLabels.spin} (${spinLabels.free})` : `🎰 ${spinLabels.spin} (-ETB ${currentSpinCost})`)}
         </button>
       </div>
     </div>

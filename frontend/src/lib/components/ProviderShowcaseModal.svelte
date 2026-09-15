@@ -238,6 +238,7 @@
       price: selectedUnit.pricePerUnit,
       availableQuantity: selectedUnit.availableCount,
       variantDetails: {
+        variantId: selectedUnit.id,
         variantName: selectedUnit.title,
         specs: `${selectedUnit.specs.guests} • ${selectedUnit.specs.beds} • ${selectedUnit.specs.size}`,
         withDriver: listing.category === 'CAR_RENTAL' ? includeDriver : false,

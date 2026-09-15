@@ -3,9 +3,14 @@
   import Icon from './Icon.svelte';
 
   export let show = false;
+  export let currentLanguage = 'en';
   export let onClose = () => {};
 
   let activeMode = 'CURRENCY';
+  $: isAmharic = currentLanguage === 'am';
+  $: toolLabels = isAmharic
+    ? { title: 'የEasy መሳሪያዎች', subtitle: 'ለጉዞዎ የገንዘብ፣ የጉዞ እና የቡድን ማቀድ መሳሪያዎች።', currency: 'ምንዛሬ', guide: 'የአካባቢ መመሪያ', emergency: 'አደጋ', quick: 'መክፈያ ክፍፍል', wheel: 'ዕድል መሽከርከሪያ', close: 'ዝጋ' }
+    : { title: 'Easy Tools', subtitle: 'Useful travel, money and group-planning tools for your EasyService trip.', currency: 'Currency', guide: 'Local Guide', emergency: 'Emergency', quick: 'Split', wheel: 'Wheel', close: 'Close' };
 
   // Currency converter — live public reference rates with a local fallback.
   let currencyAmount = 100;
@@ -141,18 +146,18 @@
     <div class="marketplace-card modal-content animate-fade-in">
       <div class="modal-header">
         <div>
-          <h2><Icon name="sparkles" size={18} color="var(--accent-gold)" /> Easy Tools</h2>
-          <p class="subtitle">Useful travel, money and group-planning tools for your EasyService trip.</p>
+          <h2><Icon name="sparkles" size={18} color="var(--accent-gold)" /> {toolLabels.title}</h2>
+          <p class="subtitle">{toolLabels.subtitle}</p>
         </div>
         <button class="close-btn" on:click={onClose} aria-label="Close Easy Tools">✕</button>
       </div>
 
       <div class="mode-tabs">
-        <button class="mode-tab {activeMode === 'CURRENCY' ? 'active' : ''}" on:click={() => activeMode = 'CURRENCY'}>💱 Currency</button>
-        <button class="mode-tab {activeMode === 'GUIDE' ? 'active' : ''}" on:click={() => activeMode = 'GUIDE'}>📍 Local Guide</button>
-        <button class="mode-tab {activeMode === 'EMERGENCY' ? 'active' : ''}" on:click={() => activeMode = 'EMERGENCY'}>🚨 Emergency</button>
-        <button class="mode-tab {activeMode === 'QUICK' ? 'active' : ''}" on:click={() => activeMode = 'QUICK'}>⚡ Split</button>
-        <button class="mode-tab {activeMode === 'WHEEL' ? 'active' : ''}" on:click={() => activeMode = 'WHEEL'}>🎡 Wheel</button>
+        <button class="mode-tab {activeMode === 'CURRENCY' ? 'active' : ''}" on:click={() => activeMode = 'CURRENCY'}>💱 {toolLabels.currency}</button>
+        <button class="mode-tab {activeMode === 'GUIDE' ? 'active' : ''}" on:click={() => activeMode = 'GUIDE'}>📍 {toolLabels.guide}</button>
+        <button class="mode-tab {activeMode === 'EMERGENCY' ? 'active' : ''}" on:click={() => activeMode = 'EMERGENCY'}>🚨 {toolLabels.emergency}</button>
+        <button class="mode-tab {activeMode === 'QUICK' ? 'active' : ''}" on:click={() => activeMode = 'QUICK'}>⚡ {toolLabels.quick}</button>
+        <button class="mode-tab {activeMode === 'WHEEL' ? 'active' : ''}" on:click={() => activeMode = 'WHEEL'}>🎡 {toolLabels.wheel}</button>
       </div>
 
       {#if activeMode === 'CURRENCY'}
@@ -185,7 +190,7 @@
         <div class="tool-pane text-center"><div class="form-field"><label for="wheelParticipantsInput">Participant Names (comma separated)</label><input id="wheelParticipantsInput" type="text" bind:value={wheelNames} class="input-field" /></div><div class="wheel-stage"><div class="wheel-pointer">▼</div><div class="wheel-spinner" style={`--wheel-rotation: ${wheelRotation}deg; --wheel-segments: ${Math.max(1, wheelParticipants.length)};`}><div class="wheel-segments">{#each wheelParticipants as name, index}<span class="wheel-name" style={`--segment-index: ${index}; --segment-angle: ${wheelSegmentAngle}deg;`}>{name}</span>{/each}</div><span class="wheel-center-icon">🎯</span></div><button class="btn-gold spin-act-btn" disabled={isSpinning || wheelParticipants.length < 2} on:click={handleSpinWheel}>{isSpinning ? 'Spinning for 5 seconds...' : 'SPIN THE WHEEL! 🎡'}</button></div>{#if selectedPayer}<div class="winner-banner animate-fade-in"><span class="winner-title">🎉 WINNER ANNOUNCED 🎉</span><h3 class="winner-name">{selectedPayer} PAYS THE BILL!</h3></div>{/if}</div>
       {/if}
 
-      <div class="modal-footer"><button class="btn-outline" on:click={onClose}>Close</button></div>
+      <div class="modal-footer"><button class="btn-outline" on:click={onClose}>{toolLabels.close}</button></div>
     </div>
   </div>
 {/if}
@@ -197,7 +202,7 @@
   .modal-header h2 { font-size:1.35rem; font-weight:900; color:var(--text-main); display:flex; align-items:center; gap:8px; }
   .subtitle { font-size:.82rem; color:var(--text-muted); margin-top:4px; }
   .close-btn { background:transparent; border:0; font-size:1.25rem; cursor:pointer; color:var(--text-muted); }
-  .mode-tabs { display:flex; gap:6px; background:var(--bg-surface-secondary); padding:6px; border-radius:var(--radius-md); overflow-x:auto; }
+  .mode-tabs { display:flex; gap:6px; background:var(--bg-surface-secondary); padding:6px; border-radius:var(--radius-md); overflow-x:auto; scrollbar-width:thin; flex:0 0 auto; position:sticky; top:0; z-index:2; }
   .mode-tab { flex:1; min-width:max-content; padding:9px 10px; font-size:.78rem; font-weight:800; border:0; border-radius:var(--radius-sm); background:transparent; cursor:pointer; color:var(--text-muted); }
   .mode-tab.active { background:var(--bg-surface); color:var(--accent-gold); }
   .tool-pane { display:flex; flex-direction:column; gap:16px; }
@@ -240,5 +245,5 @@
   .winner-title { font-size:.72rem; font-weight:900; color:var(--accent-gold); }
   .winner-name { margin:5px 0 0; }
   .modal-footer { display:flex; justify-content:flex-end; padding-top:4px; }
-  @media (max-width:600px) { .modal-content { width:calc(100% - 24px); padding:18px; max-height:88vh; } .form-grid,.emergency-grid { grid-template-columns:1fr; } .mode-tabs { gap:4px; } .mode-tab { padding:8px; } .rate-row span:last-of-type { margin-left:0; } .result-card { flex-direction:column; align-items:flex-start; } }
+  @media (max-width:600px) { .modal-backdrop { align-items:flex-start; overflow-y:auto; padding:12px 0; } .modal-content { width:calc(100% - 24px); padding:16px; max-height:calc(100vh - 24px); overflow-y:auto; } .modal-header { position:sticky; top:-16px; z-index:3; padding:4px 0 10px; background:var(--bg-surface); } .form-grid,.emergency-grid { grid-template-columns:1fr; } .mode-tabs { gap:4px; margin:0 -2px; } .mode-tab { flex:0 0 auto; padding:9px 10px; } .rate-row span:last-of-type { margin-left:0; } .result-card { flex-direction:column; align-items:flex-start; } }
 </style>

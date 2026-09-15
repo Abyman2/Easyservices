@@ -2,6 +2,7 @@
   import Icon from './Icon.svelte';
 
   export let booking = null;
+  export let currentLanguage = 'en';
   export let onClose = () => {};
   export let onCancel = (id) => {};
   export let onComplete = (id) => {};
@@ -10,6 +11,10 @@
   let rating = 5;
   let reviewText = '';
   const customerCancellationReasons = ['Change of plans', 'Found another option', 'Dates no longer work', 'Booked by mistake', 'Travel disruption'];
+  $: isAmharic = currentLanguage === 'am';
+  $: labels = isAmharic
+    ? { close: 'ዝጋ', cancel: 'ሰርዝ እና ገንዘብ መልስ', finish: 'እንደተጠናቀቀ ምልክት አድርግ', reason: 'የስረዛ ምክንያት' }
+    : { close: 'Close Pass', cancel: 'Cancel & Instant Wallet Refund (BR-14)', finish: 'Mark as finished', reason: 'Cancellation reason' };
 </script>
 
 {#if booking}
@@ -87,16 +92,16 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn-outline" on:click={onClose}>Close Pass</button>
+        <button class="btn-outline" on:click={onClose}>{labels.close}</button>
         {#if booking.status === 'CONFIRMED'}
-          <select class="reason-select" bind:value={cancellationReason} aria-label="Cancellation reason">
+            <select class="reason-select" bind:value={cancellationReason} aria-label={labels.reason}>
             {#each customerCancellationReasons as reason}<option value={reason}>{reason}</option>{/each}
           </select>
           <button class="btn-outline cancel-btn" on:click={() => { onCancel(booking.id, cancellationReason); onClose(); }}>
-            Cancel & Instant Wallet Refund (BR-14)
+            {labels.cancel}
           </button>
         {/if}
-        {#if booking.status === 'CONFIRMED'}<button class="btn-gold" on:click={() => onComplete(booking.id)}>Mark as finished</button>{/if}
+        {#if booking.status === 'CONFIRMED'}<button class="btn-gold" on:click={() => onComplete(booking.id)}>{labels.finish}</button>{/if}
       </div>
       {#if booking.status === 'COMPLETED' && !booking.rating}
         <div class="review-box"><h3>How was your experience?</h3><div class="rating-row">{#each [1, 2, 3, 4, 5] as value}<button class:chosen={value <= rating} on:click={() => rating = value} aria-label={`${value} stars`}>★</button>{/each}</div><textarea bind:value={reviewText} placeholder="Tell the provider what went well" rows="3"></textarea><button class="btn-gold" on:click={() => onReview(booking.id, rating, reviewText)}>Submit rating and review</button></div>
@@ -252,6 +257,8 @@
     padding-top: 14px;
   }
 
+  .reason-select { min-width: 0; flex: 1 1 150px; padding: 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); }
+
   .cancel-btn {
     border-color: var(--accent-terracotta);
     color: var(--accent-terracotta);
@@ -260,5 +267,18 @@
   .cancel-btn:hover {
     background: var(--accent-terracotta);
     color: #ffffff;
+  }
+
+  @media (max-width: 600px) {
+    .modal-backdrop { align-items: flex-start; overflow-y: auto; padding: 12px 0; }
+    .booking-details-modal { width: calc(100% - 24px); max-height: calc(100vh - 24px); overflow-y: auto; padding: 16px; gap: 12px; }
+    .header-left h2 { font-size: 1.15rem; line-height: 1.2; margin: 6px 0 0; overflow-wrap: anywhere; }
+    .pass-status-bar, .breakdown-item { align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+    .tx-id { overflow-wrap: anywhere; }
+    .pass-body-grid { grid-template-columns: 1fr; gap: 14px; }
+    .pass-cover-img { height: 150px; }
+    .modal-footer { flex-direction: column; align-items: stretch; gap: 8px; }
+    .modal-footer button, .reason-select { width: 100%; min-height: 44px; }
+    .review-box textarea { width: 100%; box-sizing: border-box; }
   }
 </style>

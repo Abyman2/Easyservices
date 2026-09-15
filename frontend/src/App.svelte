@@ -98,6 +98,32 @@
   let newsletterMessage = '';
   let currency = 'ETB';
 
+  function persistProviderInventory(listingId, quantity, variantId = null) {
+    providerPublishedListings = providerPublishedListings.map((listing) =>
+      listing.id === listingId
+        ? {
+            ...listing,
+            availableQuantity: Math.max(0, listing.availableQuantity - quantity),
+            variants: (listing.variants || []).map((variant) =>
+              variant.id === variantId
+                ? { ...variant, availableCount: Math.max(0, variant.availableCount - quantity) }
+                : variant
+            )
+          }
+        : listing
+    );
+    localStorage.setItem('easyservice_provider_listings', JSON.stringify(providerPublishedListings));
+  }
+
+  async function refreshCustomerListings() {
+    const refreshed = await fetchListings();
+    const providerIds = new Set(providerPublishedListings.map((listing) => listing.id));
+    listings = [
+      ...providerPublishedListings,
+      ...refreshed.filter((listing) => !providerIds.has(listing.id))
+    ];
+  }
+
   $: footerLabels = currentLanguage === 'am'
     ? { providerEyebrow: 'የEasyService ማህበረሰብን ይቀላቀሉ', providerTitle: 'የተረጋገጠ አቅራቢ ይሁኑ', providerDesc: 'ሆቴልዎን፣ መኪናዎን፣ ዝግጅትዎን፣ ልምድዎን ወይም ምርቶችዎን ይዘርዝሩ እና በመላው ኢትዮጵያ ያሉ የተረጋገጡ ደንበኞችን ያግኙ።', verified: 'የተረጋገጠ የገበያ ቦታ', reachCustomers: 'የታመኑ ደንበኞችን ያግኙ', management: 'ቀላል አስተዳደር', managementDesc: 'ለመዘርዘር እና ለማስተዳደር ቀላል መሳሪያዎች', securePayments: 'የተጠበቁ ክፍያዎች', paymentsDesc: 'የማሳያ ክፍያዎች እና ክፍያ መቀበያዎች', growth: 'የደንበኛ እድገት', growthDesc: 'ንግድዎን በየቀኑ ያሳድጉ', become: 'አቅራቢ ይሁኑ', how: 'እንዴት እንደሚሰራ', free: 'መቀላቀል ነፃ ነው እና መጀመር ቀላል ነው።', activeProviders: 'ንቁ አቅራቢዎች', growing: 'በመላው ኢትዮጵያ አብረን እያደግን ነው', description: 'የኢትዮጵያ የታመነ የመኖሪያ፣ የመጓጓዣ፣ የልምድ፣ የዝግጅት እና የእውነተኛ ምርቶች የገበያ ቦታ።', discover: 'ያግኙ', customers: 'ለደንበኞች', providers: 'ለአቅራቢዎች', destinations: 'መዳረሻዎች', company: 'ድርጅት', explore: 'መርምር', stays: 'መኖሪያዎች', drive: 'መኪና', experiences: 'ልምዶች', shop: 'ግዢ', bookings: 'የእኔ ቦታ ማስያዣዎች', passport: 'የፓስፖርት መገለጫ', wallet: 'Easy የኪስ ቦርሳ', help: 'እርዳታ እና ድጋፍ', providerHub: 'የአቅራቢ ማዕከል', listService: 'አገልግሎት ይዘርዝሩ', support: 'የአቅራቢ ድጋፍ', about: 'ስለ EasyService', trust: 'እምነት እና ደህንነት', terms: 'ውሎች', privacy: 'ግላዊነት', stayConnected: 'ግንኙነታችሁን ይቀጥሉ', deals: 'ምርጥ ቅናሾችን እና የአካባቢ ግኝቶችን ያግኙ።', email: 'ኢሜይልዎን ያስገቡ', subscribe: 'ይመዝገቡ', app: 'መተግበሪያችንን ያውርዱ', secure: 'የተረጋገጠ እና የተጠበቀ', secureDesc: 'ሁሉም አቅራቢዎች ለደህንነትዎ ተረጋግጠዋል', support24: '24/7 ድጋፍ', supportDesc: 'እርዳታ በሚፈልጉበት ጊዜ ሁሉ እዚህ ነን', made: 'በኢትዮጵያ የተሰራ', discovery: 'የህዝብ ምንጭ ፍለጋ', discovered: 'የተገኙ ንግዶች', found: 'ተገኝተዋል', searching: 'በመፈለግ ላይ', discoveryDesc: 'ከህዝብ ምንጮች የተገኙ ንግዶች። እነዚህ የEasyService አቅራቢዎች አይደሉም እና በEasyService ሊያዙ አይችሉም።', allBusinesses: 'ሁሉም የተረጋገጡ ንግዶች', verifiedListed: 'የተረጋገጡ አቅራቢዎች ተዘርዝረዋል', sortBy: 'ደርድር በ', recommended: 'የሚመከር', priceLow: 'ዋጋ፡ ከዝቅተኛ ወደ ከፍተኛ', priceHigh: 'ዋጋ፡ ከፍተኛ ወደ ዝቅተኛ', reset: 'ሁሉንም ማጣሪያዎች ዳግም አስጀምር' }
     : { providerEyebrow: 'JOIN THE EASYSERVICE COMMUNITY', providerTitle: 'Become a Verified Provider', providerDesc: 'List your hotel, vehicle, event, experience, or products and reach thousands of verified customers across Ethiopia.', verified: 'Verified Marketplace', reachCustomers: 'Reach trusted customers', management: 'Easy Management', managementDesc: 'Simple tools to list and manage', securePayments: 'Secure Payments', paymentsDesc: 'Simulated payments and payouts', growth: 'Customer Growth', growthDesc: 'Grow your business every day', become: 'Become a Provider', how: 'How It Works', free: "It's free to join and easy to get started.", activeProviders: 'Active Providers', growing: 'Growing together across Ethiopia', description: "Ethiopia's trusted marketplace for stays, transportation, experiences, events, and authentic products.", discover: 'Discover', customers: 'For Customers', providers: 'For Providers', destinations: 'Destinations', company: 'Company', explore: 'Explore', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', help: 'Help & Support', providerHub: 'Provider Hub', listService: 'List a Service', support: 'Provider Support', about: 'About EasyService', trust: 'Trust & Safety', terms: 'Terms', privacy: 'Privacy', stayConnected: 'Stay Connected', deals: 'Get the best deals and local discoveries.', email: 'Enter your email', subscribe: 'Subscribe', app: 'Download our app', secure: 'Verified & Secure', secureDesc: 'All providers are verified for your safety and trust', support24: '24/7 Support', supportDesc: "We're here anytime you need help", made: 'Made in Ethiopia', discovery: 'PUBLIC SOURCE DISCOVERY', discovered: 'Discovered Businesses', found: 'found', searching: 'searching', discoveryDesc: 'Businesses found from public sources. These are not EasyService providers and are not bookable through EasyService.', allBusinesses: 'All Verified Businesses', verifiedListed: 'verified business providers listed', sortBy: 'Sort by', recommended: 'Recommended', priceLow: 'Price: Low to High', priceHigh: 'Price: High to Low', reset: 'Reset All Filters' };
@@ -631,10 +657,13 @@
       selectedCategory === 'ALL' ||
       l.category === selectedCategory;
 
+    const locationName = selectedLocation === 'Addis'
+      ? 'Addis Ababa'
+      : selectedLocation;
     const matchLoc =
       selectedLocation === 'ALL' ||
       (l.location &&
-        l.location.toLowerCase().includes(selectedLocation.toLowerCase()));
+        l.location.toLowerCase().includes(locationName.toLowerCase()));
 
     const q = (searchQuery || '').trim().toLowerCase();
 
@@ -964,7 +993,7 @@
     onSwitchUser={handleSwitchUser} 
   />
 
-  <EasyAssistant listings={listings} currentLanguage={currentLanguage} on:navigate={(event) => handleAssistantNavigation(event.detail)} on:openListing={(event) => openListing(event.detail)} />
+  <EasyAssistant listings={listings} discoveredListings={discoveredListings} currentLanguage={currentLanguage} on:navigate={(event) => handleAssistantNavigation(event.detail)} on:openListing={(event) => openListing(event.detail)} on:openDiscoveredListing={(event) => selectedDiscoveredListing = event.detail} />
 
   <div class="main-content">
     {#if sitePage}
@@ -1044,7 +1073,7 @@
                 <Icon name="mappin" size={16} color="var(--accent-gold)" />
                 <select id="searchWhereInput" bind:value={selectedLocation} class="search-select">
                   <option value="ALL">{currentLanguage === 'am' ? 'ሁሉም የኢትዮጵያ መዳረሻዎች' : 'All Ethiopia Destinations'}</option>
-                  <option value="Addis">አዲስ አበባ</option>
+                  <option value="Addis">{currentLanguage === 'am' ? 'አዲስ አበባ' : 'Addis Ababa'}</option>
                   <option value="Bishoftu">Bishoftu Lakefront</option>
                   <option value="Hawassa">Lake Hawassa</option>
                   <option value="Lalibela">Lalibela Highlands</option>
@@ -2093,16 +2122,18 @@
     listing={selectedListing} 
     currentLanguage={currentLanguage}
     onClose={() => selectedListing = null} 
-    onBookingSuccess={(listingId, qty) => {
-      listings = listings.map(l => l.id === listingId ? { ...l, availableQuantity: l.availableQuantity - qty } : l);
+    onBookingSuccess={(listingId, qty, variantId) => {
+      persistProviderInventory(listingId, qty, variantId);
+      listings = listings.map(l => l.id === listingId ? { ...l, availableQuantity: Math.max(0, l.availableQuantity - qty) } : l);
       if (selectedProviderListing && selectedProviderListing.id === listingId) {
-        selectedProviderListing = { ...selectedProviderListing, availableQuantity: selectedProviderListing.availableQuantity - qty };
+        selectedProviderListing = { ...selectedProviderListing, availableQuantity: Math.max(0, selectedProviderListing.availableQuantity - qty) };
       }
+      void refreshCustomerListings();
     }} 
   />
-  <BookingDetailsModal booking={selectedBookingPass} onClose={() => selectedBookingPass = null} onCancel={handleCancelBooking} onComplete={handleCompleteBooking} onReview={handleBookingReview} />
-  <SpinWheelModal show={showSpinModal} onClose={() => showSpinModal = false} />
-  <EasyToolsModal show={showToolsModal} onClose={() => showToolsModal = false} />
+  <BookingDetailsModal booking={selectedBookingPass} currentLanguage={currentLanguage} onClose={() => selectedBookingPass = null} onCancel={handleCancelBooking} onComplete={handleCompleteBooking} onReview={handleBookingReview} />
+  <SpinWheelModal show={showSpinModal} currentLanguage={currentLanguage} onClose={() => showSpinModal = false} />
+  <EasyToolsModal show={showToolsModal} currentLanguage={currentLanguage} onClose={() => showToolsModal = false} />
   <RegisterModal show={showRegisterModal} onClose={() => showRegisterModal = false} />
   
   {#if !sitePage}

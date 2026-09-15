@@ -1,6 +1,5 @@
 <script>
   import { demoUsers, currentUser } from '../stores/authStore.js';
-  import { userBookings } from '../stores/bookingStore.js';
   import Icon from './Icon.svelte';
 
   export let show = false;
@@ -22,7 +21,6 @@
     
     if (foundUser) {
       $currentUser = foundUser;
-      userBookings.set([]); // Reset bookings so it starts fresh!
       email = '';
       password = '';
     } else {
@@ -33,7 +31,6 @@
   function handleQuickLogin(user) {
     loginError = '';
     $currentUser = user;
-    userBookings.set([]); // Reset bookings so it starts fresh!
     email = '';
     password = '';
   }

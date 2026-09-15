@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -147,4 +148,82 @@ class BookingTransactionServiceTest {
         assertThrows(IllegalStateException.class, () ->
                 bookingService.completeTransaction(tx.getId()));
     }
+
+    @Test
+    void rejectsMissingUnpublishedInvalidAndOverlappingBookings() {
+        assertThrows(IllegalArgumentException.class, () -> bookingService.createBooking("missing", "list1", 1, null));
+        assertThrows(IllegalArgumentException.class, () -> bookingService.createBooking("cust1", "missing", 1, null));
+        assertThrows(IllegalArgumentException.class, () -> bookingService.createBooking("cust1", "list1", 0, null));
+        assertThrows(IllegalArgumentException.class, () -> bookingService.createBooking("cust1", "list1", 1, null, LocalDate.now().plusDays(2), LocalDate.now(), null, null, null, null, null, null));
+
+        Listing draft = new Listing("draft", "prov1", "Draft", ListingCategory.HOTEL, "Draft", BigDecimal.TEN, 2, 2, ListingStatus.DRAFT);
+        listingRepository.save(draft);
+        assertThrows(IllegalStateException.class, () -> bookingService.createBooking("cust1", "draft", 1, null));
+
+        Transaction first = bookingService.createBooking("cust1", "list1", 1, null, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), null, null, null, null, null, null);
+        assertThrows(IllegalStateException.class, () -> bookingService.createBooking("cust1", "list1", 1, null, LocalDate.now().plusDays(2), LocalDate.now().plusDays(3), null, null, null, null, null, null));
+        assertEquals(1, bookingService.getListingBookings("list1").size());
+        assertEquals(0, bookingService.getProviderBookings(null).size());
+        assertEquals(1, bookingService.getProviderBookings("prov1").size());
+        assertEquals(1, bookingService.getCustomerBookings("cust1").size());
+        assertEquals(first.getId(), bookingService.getListingBookings("list1").get(0).getId());
+    }
+
+        @Test
+        void resolvesFrontendCustomerIdsAndPreservesInvalidOrBlankIds() {
+        User frontendCustomer = new User("cust_3", "Frontend User", "frontend@example.com", "+251911000003",
+            "Password123!", "Ethiopia", CustomerType.ETHIOPIAN, IdentityType.FAYDA,
+            "FY12345680", IdentityStatus.VERIFIED, BigDecimal.valueOf(1000.00));
+        userRepository.save(frontendCustomer);
+
+        Transaction booking = bookingService.createBooking("user3", "list1", 1, null);
+
+        assertEquals("cust_3", booking.getCustomerId());
+        assertEquals(1, bookingService.getCustomerBookings("user3").size());
+        assertTrue(bookingService.getCustomerBookings(null).isEmpty());
+        assertTrue(bookingService.getCustomerBookings(" ").isEmpty());
+        assertThrows(IllegalArgumentException.class, () ->
+            bookingService.createBooking("user99", "list1", 1, null));
+        }
+
+        @Test
+        void ignoresNonBlockingDateConflictsAndHandlesOpenEndedDates() {
+        LocalDate requestedStart = LocalDate.now().plusDays(10);
+        transactionRepository.save(new Transaction("declined", "cust1", "list1", "prov1", "Name", "email", "phone",
+            1, BigDecimal.TEN, TransactionStatus.CONFIRMED, "DECLINED",
+            requestedStart, requestedStart, null, null, null, java.time.LocalDateTime.now()));
+        transactionRepository.save(new Transaction("pending", "cust1", "list1", "prov1", "Name", "email", "phone",
+            1, BigDecimal.TEN, TransactionStatus.PENDING, "PENDING",
+            requestedStart, null, null, null, null, java.time.LocalDateTime.now()));
+        transactionRepository.save(new Transaction("no-date", "cust1", "list1", "prov1", "Name", "email", "phone",
+            1, BigDecimal.TEN, TransactionStatus.CONFIRMED, "PENDING",
+            null, null, null, null, null, java.time.LocalDateTime.now()));
+
+        Transaction booking = bookingService.createBooking("cust1", "list1", 1, null,
+            requestedStart, requestedStart, null, null, null, null, null, null);
+
+        assertEquals(TransactionStatus.CONFIRMED, booking.getStatus());
+        }
+
+        @Test
+        void rejectsNullProviderAndUnsupportedProviderStatuses() {
+        Transaction transaction = bookingService.createBooking("cust1", "list1", 1, null);
+
+        assertThrows(SecurityException.class, () ->
+            bookingService.updateProviderStatus(transaction.getId(), null, "ACCEPTED"));
+        assertThrows(IllegalArgumentException.class, () ->
+            bookingService.updateProviderStatus(transaction.getId(), "prov1", null));
+        assertThrows(IllegalArgumentException.class, () ->
+            bookingService.updateProviderStatus(transaction.getId(), "prov1", "accepted"));
+        }
+
+        @Test
+        void rejectsCancellationWhenRestoredQuantityWouldExceedCapacity() {
+        Transaction transaction = bookingService.createBooking("cust1", "list1", 1, null);
+        publishedListing.setAvailableQuantity(publishedListing.getCapacity());
+
+        assertThrows(IllegalStateException.class, () ->
+            bookingService.cancelTransaction(transaction.getId(), "cust1"));
+        assertEquals(TransactionStatus.CANCELLED, transaction.getStatus());
+        }
 }

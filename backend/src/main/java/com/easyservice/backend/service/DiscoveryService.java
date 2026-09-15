@@ -15,9 +15,11 @@ public class DiscoveryService {
     private final RestClient restClient;
 
     public DiscoveryService() {
-        this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:8090")
-                .build();
+        this(RestClient.builder().baseUrl("http://localhost:8090").build());
+    }
+
+    DiscoveryService(RestClient restClient) {
+        this.restClient = restClient;
     }
 
     public Object search(String city, String area, String category) {

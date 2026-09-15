@@ -1036,12 +1036,13 @@ export async function discoverListings(city, area, category) {
     response = null;
   }
 
-  // The scraper is a separate service, so it can still run when the main backend is down.
-  if (!response || !response.ok) {
+  // The scraper is a separate service, so it can still run when the main backend is down
+  // or returns an empty result while its discovery data is still warming up.
+  let text = response && response.ok ? await response.text() : '';
+  if (!response || !response.ok || !text.trim() || text.trim() === '[]') {
     response = await fetch('/discovery-api/api/discovery/addis/search', request);
+    text = await response.text();
   }
-
-  const text = await response.text();
 
   if (!response.ok) {
     let message = `Discovery request failed (${response.status})`;

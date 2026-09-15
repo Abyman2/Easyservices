@@ -173,7 +173,7 @@
           currentUser.update(u => ({ ...u, balance: Math.max(0, u.balance - finalPaid) }));
         }
         listing.availableQuantity -= quantity;
-        onBookingSuccess(listing.id, quantity);
+        onBookingSuccess(listing.id, quantity, listing.variantDetails?.variantId);
 
         const bookingId = 'ES-2026-' + Math.floor(100000 + Math.random() * 900000);
 
