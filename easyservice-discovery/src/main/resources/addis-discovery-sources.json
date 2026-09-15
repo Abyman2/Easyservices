@@ -1,0 +1,177 @@
+{
+  "country": "Ethiopia",
+  "city": "Addis Ababa",
+  "testMode": true,
+  "testLimitPerCategory": 5,
+  "cityWideAreaToken": "ALL",
+  "sourcePolicy": {
+    "preferStructuredData": true,
+    "allowInventedPrices": false,
+    "allowInventedPhoneNumbers": false,
+    "allowInventedImages": false,
+    "respectRobotsAndTerms": true
+  },
+  "liveSources": [
+    {
+      "name": "Bole Green Hotel",
+      "category": "HOTEL",
+      "urls": [
+        "https://bolegreen.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Jupiter International Hotel",
+      "category": "HOTEL",
+      "urls": [
+        "https://www.jupiterinternationalhotel.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Mosaic Hotel",
+      "category": "HOTEL",
+      "urls": [
+        "https://themosaichotel.co/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Sabon Hotel",
+      "category": "HOTEL",
+      "urls": [
+        "https://sabonhotel.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "C Fun Addis Hotel",
+      "category": "HOTEL",
+      "urls": [
+        "https://www.cfunaddishotel.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Addis Car Rental",
+      "category": "CAR",
+      "urls": [
+        "https://www.addiscarrent.com/car-rental-in-addis-ababa/",
+        "https://www.addiscarrent.com/addis-ababa-car-rental-prices-car-for-rent-in-ethiopia/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Ethio Car Rental & Tours",
+      "category": "CAR",
+      "urls": [
+        "https://ethiocarrent.com/contact-us/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Platinum Car Rental",
+      "category": "CAR",
+      "urls": [
+        "https://ethiopia-car-rental.com/locations/addis-ababa/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Jano Car Rental",
+      "category": "CAR",
+      "urls": [
+        "https://www.janocarental.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Ethio Zerihun Car Rental",
+      "category": "CAR",
+      "urls": [
+        "https://zerihuncarrent.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Meron Addis Ababa",
+      "category": "STORE",
+      "urls": [
+        "https://meronaddisababa.com/contact-us/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "CK Tech",
+      "category": "STORE",
+      "urls": [
+        "https://www.cktech.store/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Arada Mall",
+      "category": "STORE",
+      "urls": [
+        "https://aradamall.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Getu Commercial Center",
+      "category": "STORE",
+      "urls": [
+        "https://getucommercialcenter.lovable.app/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "SuperKare Shops",
+      "category": "STORE",
+      "urls": [
+        "https://www.superkare.com/pages/shops"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Eventful Ethiopia",
+      "category": "EVENT",
+      "urls": [
+        "https://eventful.et/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Visit Ethiopia Events",
+      "category": "EVENT",
+      "urls": [
+        "https://visitethiopia.et/event"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "Explore Addis Events",
+      "category": "EVENT",
+      "urls": [
+        "https://explore-addis.com/events/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "EthiopiaEvents",
+      "category": "EVENT",
+      "urls": [
+        "https://ethiopiaevents.com/"
+      ],
+      "enabled": true
+    },
+    {
+      "name": "AddisForge Events",
+      "category": "EVENT",
+      "urls": [
+        "https://events.addisforge.com/"
+      ],
+      "enabled": true
+    }
+  ]
+}

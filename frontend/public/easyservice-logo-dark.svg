@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 360" role="img" aria-labelledby="title desc">
+  <title id="title">EasyService</title>
+  <desc id="desc">EasyService logo with light and gold ES mark, wordmark, and Purely Simple tagline.</desc>
+  <g transform="translate(38 78)">
+    <path fill="#f7f4ee" d="M0 30C0 13 13 0 30 0h130c-19 13-31 29-38 48H48c-12 0-22 10-22 22v21h91c-18 9-30 20-39 37H26v26c0 12 10 22 22 22h73c-7 19-19 35-37 48H30c-17 0-30-13-30-30V30Z"/>
+    <path fill="#d9a52f" d="M142 0h61c22 0 41 12 51 31l17 32h-91c-13 0-23 10-23 23s10 23 23 23h90c16 0 29 13 29 29v56c0 17-13 30-30 30h-67c18-13 31-29 38-48h-67c-38 0-68-30-68-67S135 42 172 42h43l-19-42h-54Z"/>
+    <path fill="#d9a52f" d="m128 75 10 28 28 10-28 10-10 28-10-28-28-10 28-10 10-28Z"/>
+  </g>
+  <text x="365" y="205" fill="#f7f4ee" font-family="Georgia,serif" font-size="112" font-weight="700">Easy</text>
+  <text x="620" y="205" fill="#d9a52f" font-family="Georgia,serif" font-size="112" font-weight="700">Service</text>
+  <path stroke="#f7f4ee" stroke-width="3" d="M365 247h94M875 247h92"/>
+  <text x="478" y="263" fill="#f7f4ee" font-family="Arial,sans-serif" font-size="30" font-weight="700" letter-spacing="12">PURELY SIMPLE</text>
+</svg>

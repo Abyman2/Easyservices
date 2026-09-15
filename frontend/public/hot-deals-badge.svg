@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 180" role="img" aria-labelledby="title">
+  <title id="title">Hot Deals</title>
+  <path fill="#e30613" stroke="#ffb000" stroke-width="7" d="m110 4 18 25 31-15-3 32 34 2-20 26 27 19-31 13 13 31-32-4-8 32-27-19-22 25-15-29-31 14 2-33-34-3 20-25L5 78l31-13-13-31 34 5L65 8l28 19z"/>
+  <path fill="#ffce00" d="m110 20 7 12 13 2-10 9 3 13-13-7-12 7 2-13-9-9 13-2z"/>
+  <text x="110" y="83" text-anchor="middle" fill="#fff" stroke="#ffce00" stroke-width="3" paint-order="stroke" font-family="Arial,sans-serif" font-size="39" font-style="italic" font-weight="900">HOT</text>
+  <text x="110" y="121" text-anchor="middle" fill="#fff" stroke="#ffce00" stroke-width="3" paint-order="stroke" font-family="Arial,sans-serif" font-size="35" font-style="italic" font-weight="900">DEALS</text>
+  <circle cx="110" cy="73" r="8" fill="#ffce00"/><path fill="#e30613" d="m112 61-7 14h6l-3 11 8-15h-6z"/>
+</svg>
