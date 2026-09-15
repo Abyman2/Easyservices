@@ -1,6 +1,7 @@
 package com.easyservice.backend.service;
 
 import org.springframework.http.MediaType;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -43,6 +44,6 @@ public class DiscoveryService {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(request)
                 .retrieve()
-                .body(List.class);
+                .body(new ParameterizedTypeReference<List<Object>>() {});
     }
 }
