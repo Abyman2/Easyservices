@@ -12,6 +12,7 @@
   import SpinWheelModal from './lib/components/SpinWheelModal.svelte';
   import EasyToolsModal from './lib/components/EasyToolsModal.svelte';
   import RegisterModal from './lib/components/RegisterModal.svelte';
+  import EasyAssistant from './lib/components/EasyAssistant.svelte';
   import SitePage from './lib/components/SitePage.svelte';
   import Icon from './lib/components/Icon.svelte';
   import { fetchListings, mockProviders,discoverListings, fetchCustomerBookings, fetchProviderBookings, updateProviderBookingStatus, cancelBooking } from './lib/api/api.js';
@@ -99,7 +100,7 @@
 
   $: footerLabels = currentLanguage === 'am'
     ? { providerEyebrow: 'የEasyService ማህበረሰብን ይቀላቀሉ', providerTitle: 'የተረጋገጠ አቅራቢ ይሁኑ', providerDesc: 'ሆቴልዎን፣ መኪናዎን፣ ዝግጅትዎን፣ ልምድዎን ወይም ምርቶችዎን ይዘርዝሩ እና በመላው ኢትዮጵያ ያሉ የተረጋገጡ ደንበኞችን ያግኙ።', verified: 'የተረጋገጠ የገበያ ቦታ', reachCustomers: 'የታመኑ ደንበኞችን ያግኙ', management: 'ቀላል አስተዳደር', managementDesc: 'ለመዘርዘር እና ለማስተዳደር ቀላል መሳሪያዎች', securePayments: 'የተጠበቁ ክፍያዎች', paymentsDesc: 'የማሳያ ክፍያዎች እና ክፍያ መቀበያዎች', growth: 'የደንበኛ እድገት', growthDesc: 'ንግድዎን በየቀኑ ያሳድጉ', become: 'አቅራቢ ይሁኑ', how: 'እንዴት እንደሚሰራ', free: 'መቀላቀል ነፃ ነው እና መጀመር ቀላል ነው።', activeProviders: 'ንቁ አቅራቢዎች', growing: 'በመላው ኢትዮጵያ አብረን እያደግን ነው', description: 'የኢትዮጵያ የታመነ የመኖሪያ፣ የመጓጓዣ፣ የልምድ፣ የዝግጅት እና የእውነተኛ ምርቶች የገበያ ቦታ።', discover: 'ያግኙ', customers: 'ለደንበኞች', providers: 'ለአቅራቢዎች', destinations: 'መዳረሻዎች', company: 'ድርጅት', explore: 'መርምር', stays: 'መኖሪያዎች', drive: 'መኪና', experiences: 'ልምዶች', shop: 'ግዢ', bookings: 'የእኔ ቦታ ማስያዣዎች', passport: 'የፓስፖርት መገለጫ', wallet: 'Easy የኪስ ቦርሳ', help: 'እርዳታ እና ድጋፍ', providerHub: 'የአቅራቢ ማዕከል', listService: 'አገልግሎት ይዘርዝሩ', support: 'የአቅራቢ ድጋፍ', about: 'ስለ EasyService', trust: 'እምነት እና ደህንነት', terms: 'ውሎች', privacy: 'ግላዊነት', stayConnected: 'ግንኙነታችሁን ይቀጥሉ', deals: 'ምርጥ ቅናሾችን እና የአካባቢ ግኝቶችን ያግኙ።', email: 'ኢሜይልዎን ያስገቡ', subscribe: 'ይመዝገቡ', app: 'መተግበሪያችንን ያውርዱ', secure: 'የተረጋገጠ እና የተጠበቀ', secureDesc: 'ሁሉም አቅራቢዎች ለደህንነትዎ ተረጋግጠዋል', support24: '24/7 ድጋፍ', supportDesc: 'እርዳታ በሚፈልጉበት ጊዜ ሁሉ እዚህ ነን', made: 'በኢትዮጵያ የተሰራ', discovery: 'የህዝብ ምንጭ ፍለጋ', discovered: 'የተገኙ ንግዶች', found: 'ተገኝተዋል', searching: 'በመፈለግ ላይ', discoveryDesc: 'ከህዝብ ምንጮች የተገኙ ንግዶች። እነዚህ የEasyService አቅራቢዎች አይደሉም እና በEasyService ሊያዙ አይችሉም።', allBusinesses: 'ሁሉም የተረጋገጡ ንግዶች', verifiedListed: 'የተረጋገጡ አቅራቢዎች ተዘርዝረዋል', sortBy: 'ደርድር በ', recommended: 'የሚመከር', priceLow: 'ዋጋ፡ ከዝቅተኛ ወደ ከፍተኛ', priceHigh: 'ዋጋ፡ ከፍተኛ ወደ ዝቅተኛ', reset: 'ሁሉንም ማጣሪያዎች ዳግም አስጀምር' }
-    : { providerEyebrow: 'JOIN THE EASYSERVICE COMMUNITY', providerTitle: 'Become a Verified Provider', providerDesc: 'List your hotel, vehicle, event, experience, or products and reach thousands of verified customers across Ethiopia.', verified: 'Verified Marketplace', reachCustomers: 'Reach trusted customers', management: 'Easy Management', managementDesc: 'Simple tools to list and manage', securePayments: 'Secure Payments', paymentsDesc: 'Simulated payments and payouts', growth: 'Customer Growth', growthDesc: 'Grow your business every day', become: 'Become a Provider', how: 'How It Works', free: "It's free to join and easy to get started.", activeProviders: 'Active Providers', growing: 'Growing together across Ethiopia', description: "Ethiopia's trusted marketplace for stays, transportation, experiences, events, and authentic products.", discover: 'Discover', customers: 'For Customers', providers: 'For Providers', destinations: 'Destinations', company: 'Company', explore: 'Explore', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', help: 'Help & Support', providerHub: 'Provider Hub', listService: 'List a Service', support: 'Provider Support', about: 'About EasyService', trust: 'Trust & Safety', terms: 'Terms', privacy: 'Privacy', stayConnected: 'Stay Connected', deals: 'Get the best deals and local discoveries.', email: 'Enter your email', subscribe: 'Subscribe', app: 'Download our app', secure: 'Verified & Secure', secureDesc: 'All providers are verified for your safety and trust', support24: '24/7 Support', supportDesc: "We're here anytime you need help", made: 'Made in Ethiopia' };
+    : { providerEyebrow: 'JOIN THE EASYSERVICE COMMUNITY', providerTitle: 'Become a Verified Provider', providerDesc: 'List your hotel, vehicle, event, experience, or products and reach thousands of verified customers across Ethiopia.', verified: 'Verified Marketplace', reachCustomers: 'Reach trusted customers', management: 'Easy Management', managementDesc: 'Simple tools to list and manage', securePayments: 'Secure Payments', paymentsDesc: 'Simulated payments and payouts', growth: 'Customer Growth', growthDesc: 'Grow your business every day', become: 'Become a Provider', how: 'How It Works', free: "It's free to join and easy to get started.", activeProviders: 'Active Providers', growing: 'Growing together across Ethiopia', description: "Ethiopia's trusted marketplace for stays, transportation, experiences, events, and authentic products.", discover: 'Discover', customers: 'For Customers', providers: 'For Providers', destinations: 'Destinations', company: 'Company', explore: 'Explore', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', help: 'Help & Support', providerHub: 'Provider Hub', listService: 'List a Service', support: 'Provider Support', about: 'About EasyService', trust: 'Trust & Safety', terms: 'Terms', privacy: 'Privacy', stayConnected: 'Stay Connected', deals: 'Get the best deals and local discoveries.', email: 'Enter your email', subscribe: 'Subscribe', app: 'Download our app', secure: 'Verified & Secure', secureDesc: 'All providers are verified for your safety and trust', support24: '24/7 Support', supportDesc: "We're here anytime you need help", made: 'Made in Ethiopia', discovery: 'PUBLIC SOURCE DISCOVERY', discovered: 'Discovered Businesses', found: 'found', searching: 'searching', discoveryDesc: 'Businesses found from public sources. These are not EasyService providers and are not bookable through EasyService.', allBusinesses: 'All Verified Businesses', verifiedListed: 'verified business providers listed', sortBy: 'Sort by', recommended: 'Recommended', priceLow: 'Price: Low to High', priceHigh: 'Price: High to Low', reset: 'Reset All Filters' };
 
   const accommodationTypes = ['Hotel', 'Guesthouse', 'Resort', 'Lodge', 'Villa', 'Hostel'];
   const roomTypes = ['Single Room', 'Double Room', 'Twin Room', 'Standard Room', 'Deluxe Room', 'Superior Room', 'Family Room', 'Executive Room', 'Studio', 'Apartment', 'Junior Suite', 'Executive Suite', 'Presidential Suite', 'Villa', 'Bungalow', 'Cottage', 'Guesthouse Room', 'Dormitory Bed', 'Entire Guesthouse', 'Resort Villa'];
@@ -447,6 +448,15 @@
     }
     window.history.pushState({}, '', `#${page}`);
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }
+
+  function handleAssistantNavigation(target) {
+    const categoryTargets = { HOTEL: 'HOTEL', CAR_RENTAL: 'CAR_RENTAL', EVENT: 'EVENT' };
+    if (categoryTargets[target]) {
+      goToCategory(categoryTargets[target]);
+      return;
+    }
+    navigateToSitePage(target);
   }
 
   function handleWalletTopUp(amount) {
@@ -954,6 +964,8 @@
     onSwitchUser={handleSwitchUser} 
   />
 
+  <EasyAssistant listings={listings} currentLanguage={currentLanguage} on:navigate={(event) => handleAssistantNavigation(event.detail)} on:openListing={(event) => openListing(event.detail)} />
+
   <div class="main-content">
     {#if sitePage}
       <SitePage
@@ -1163,7 +1175,7 @@
             <div>
               <h2 class="browse-title">
                 {selectedCategory === 'ALL'
-                ? `${footerLabels.allBusinesses} (28 ድምር)`
+                ? `${footerLabels.allBusinesses} (${currentLanguage === 'am' ? '28 ድምር' : '28 Total'})`
                 : categoryAtmospheres[selectedCategory].tag}
               </h2>
 
