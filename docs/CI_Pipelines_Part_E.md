@@ -77,7 +77,7 @@ jobs:
 | **Set up JDK 21** | Installs Temurin JDK 21 with Maven caching | Compilation fails |
 | **Set up Node.js 20** | Installs frontend runtime and npm cache | Selenium environment cannot start |
 | **Start frontend** | Serves Vite at port 5173 for browser tests | E2E tests skip or fail |
-| **Build & Test** | `mvn clean test` — compiles all source code, runs all 58 unit/integration/selenium tests | ❌ **Build fails** if any test fails — **this is how regressions are caught** |
+| **Build & Test** | `mvn clean test` — compiles all source code, runs all 73 backend unit/integration/selenium tests | ❌ **Build fails** if any test fails — **this is how regressions are caught** |
 | **Coverage Check** | `mvn jacoco:check` — enforces ≥80% branch coverage threshold | ❌ **Build fails** if coverage drops below target |
 | **Upload Artifact** | Uploads the full JaCoCo HTML report as a downloadable artifact | Reports become unavailable |
 
@@ -227,7 +227,7 @@ pipeline {
 | Stage | Description |
 |-------|------------|
 | **Checkout** | Pulls latest code from the Git repository |
-| **Build & Test** | Compiles and runs all 58 automated test cases |
+| **Build & Test** | Compiles and runs all 73 automated backend test cases |
 | **Code Coverage Check** | Enforces the ≥80% branch coverage threshold |
 | **Publish Reports** | Publishes the JaCoCo coverage report as a Jenkins build artifact viewable in the Jenkins UI |
 | **Post: cleanWs()** | Cleans the workspace after every build to prevent stale artifacts |

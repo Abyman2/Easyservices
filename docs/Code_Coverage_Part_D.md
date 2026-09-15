@@ -63,7 +63,7 @@
 ### How to Generate the Report
 ```bash
 cd backend
-mvn clean test "-Dtest=*,!EasyServiceSeleniumE2ETest"  # Runs 66 non-Selenium tests
+mvn clean test "-Dtest=*,!EasyServiceSeleniumE2ETest"  # Runs 69 non-Selenium tests
 mvn jacoco:report                                      # Generates HTML report
 mvn jacoco:check                                       # Verifies the coverage gates
 ```

@@ -115,22 +115,30 @@ The platform includes automated browser testing powered by **Selenium WebDriver*
 
 #### Test Execution:
 ```bash
-cd "c:\Users\25194\Desktop\Testing and Quality Assurance\GROUP PROJECT\Easyservice\backend"
+cd backend
 mvn test -Dtest=EasyServiceSeleniumE2ETest
+```
+
+The inventory synchronization scenario can be run independently after starting the backend and frontend:
+
+```bash
+mvn -q "-Dtest=com.easyservice.backend.selenium.EasyServiceSeleniumE2ETest#testInventoryDeductionSync" test
 ```
 
 #### Selenium Architecture & Page Objects:
 - **Test Class**: `com.easyservice.backend.selenium.EasyServiceSeleniumE2ETest`
 - **Page Objects**:
-  - `ListingPageObject.java`: Locates marketplace cards, filter controls, search bar, and category buttons.
-  - `BookingPageObject.java`: Locates modal inputs, date pickers, promo input, payment buttons, and receipt confirmation.
+   - `MarketplacePage.java`: Locates marketplace cards, availability text, and booking controls.
+   - `BookingPage.java`: Locates modal inputs, date selectors, payment buttons, and confirmation state.
 - **Selenium Scenarios Tested**:
   1. Opens Chrome browser and navigates to `http://localhost:5173`.
   2. Filters catalog by location (`Bishoftu`) and category (`HOTEL`).
   3. Opens Kuriftu Resort listing and clicks `Book Now`.
   4. Selects dates, enters `SUMMER20` promo code, and verifies price calculation.
   5. Clicks `Confirm Payment` and asserts receipt modal with Transaction ID.
-  6. Navigates to `My Bookings` and asserts booking status is `CONFIRMED`.
+   6. Verifies marketplace availability changes after a successful booking.
+
+When Chrome or the live frontend is unavailable, JUnit records an assumption skip instead of reporting an application failure.
 
 ---
 

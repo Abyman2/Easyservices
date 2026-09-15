@@ -26,11 +26,11 @@ EasyService follows the **Test Pyramid** strategy to maximise confidence while k
             /    [Slow, Few]     \       (Page Object Model)
            /______________________\
           /                        \
-         /  Integration Tests       \    2 Tests (MockMvc + Spring Boot)
+         /  Integration Tests       \    4 Tests (MockMvc + Spring Boot)
         /   [Medium Speed, Some]     \
        /______________________________\
       /                                \
-     /       Unit Tests (Core)          \  45 Tests (JUnit 5 + Test Doubles)
+   /       Unit Tests (Core)          \  65 Tests (JUnit 5 + Test Doubles)
     /  [Fast, Many — Foundation Layer]   \
    /______________________________________\
 ```
@@ -38,10 +38,10 @@ EasyService follows the **Test Pyramid** strategy to maximise confidence while k
 ### Test Count by Level
 | Level | Test Count | Framework | Speed |
 |-------|-----------|-----------|-------|
-| **Unit Tests** | 52 | JUnit 5, Test Doubles (Fakes/Spies) | < 1 second |
-| **Integration Tests** | 2 | Spring Boot Test, MockMvc | ~2 seconds |
+| **Unit Tests** | 65 | JUnit 5, Test Doubles (Fakes/Spies) | < 1 second |
+| **Integration Tests** | 4 | Spring Boot Test, MockMvc | ~2 seconds |
 | **System Tests (Selenium)** | 4 | Selenium WebDriver + Page Object Model | ~15 seconds |
-| **Total** | **58** | | |
+| **Total** | **73** | | |
 
 ---
 
@@ -87,7 +87,7 @@ EasyService uses **four distinct test doubles** to isolate units under test from
 
 ---
 
-## 3. Unit Test Suite (45 Tests)
+## 3. Unit Test Suite (65 Tests)
 
 All unit tests use **JUnit 5** and the test doubles listed above. No Spring context is loaded for pure unit tests — they execute in < 1 second total.
 
@@ -172,6 +172,11 @@ Intentional "break tests" that try to violate business rules to confirm guards a
 
 Repository-level tests validating CRUD operations on the in-memory data store.
 
+### 3.9 `FakeInfrastructureCoverageTest` (3 tests)
+**File:** `backend/src/test/java/com/easyservice/backend/infrastructure/FakeInfrastructureCoverageTest.java`
+
+Focused coverage tests exercise payment validation and balance deduction, identity and notification edge cases, and deterministic random-number behavior used by the test doubles.
+
 ---
 
 ## 4. Integration Tests (2 Tests)
@@ -214,7 +219,13 @@ All Selenium tests use the **Page Object Model** pattern. Each page in the UI is
 | 3 | **Spin The Wheel Promotion** | Promo wheel opens, spin executes, result overlay displays valid prize |
 | 4 | **Inventory Deduction After Booking** | Stock count on marketplace card decreases after successful booking completion |
 
-> **Note:** Selenium E2E tests require Chrome and the Vite frontend dev server (`npm run dev`) running on `localhost:5173`. All four scenarios now call Page Object methods; when the environment is unavailable, JUnit records an explicit assumption skip.
+> **Note:** Selenium E2E tests require Chrome and the Vite frontend dev server (`npm run dev`) running on `localhost:5173`. All four scenarios use Page Object methods. The inventory scenario reads the first listing's availability before booking and verifies that it changes after booking. When Chrome, the frontend, or the marketplace catalog is unavailable, JUnit records an explicit assumption skip.
+
+To run only the inventory synchronization scenario from `backend`, use:
+
+```bash
+mvn -q "-Dtest=com.easyservice.backend.selenium.EasyServiceSeleniumE2ETest#testInventoryDeductionSync" test
+```
 
 ---
 
@@ -236,8 +247,8 @@ Tests run: 8, Failures: 0, Errors: 0 -- ListingServiceTest
 Tests run: 2, Failures: 0, Errors: 0 -- PromotionServiceTest
 Tests run: 8, Failures: 0, Errors: 0 -- RegistrationServiceTest
 
-Tests run: 58, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 73, Failures: 0, Errors: 0, Skipped: 1
 BUILD SUCCESS
 ```
 
-All **58 automated tests pass** with zero failures and zero errors.
+All 72 executed tests pass with zero failures and zero errors. One Selenium test is recorded as an assumption skip when the live frontend/catalog environment is unavailable.

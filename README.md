@@ -55,6 +55,15 @@ cd backend
 mvn clean test
 ```
 
+The backend test suite includes unit, MockMvc integration, deterministic test-double coverage, and four Selenium system scenarios. The inventory scenario completes a booking and verifies that marketplace availability changes globally after the booking. To run that scenario by itself, start the backend and frontend, then run:
+
+```bash
+cd backend
+mvn -q "-Dtest=com.easyservice.backend.selenium.EasyServiceSeleniumE2ETest#testInventoryDeductionSync" test
+```
+
+Selenium tests run headlessly with Chrome and use JUnit assumptions to record an explicit skip when the frontend is not available at `http://localhost:5173` or the marketplace catalog cannot load.
+
 Selenium tests require Chrome and the frontend server. Start the frontend in another terminal for live browser evidence:
 
 ```bash
@@ -77,6 +86,14 @@ mvn jacoco:check
 ```
 
 The command fails if `com.easyservice.backend.service` is below 80% branch coverage. To inspect the exact result, open `backend/target/site/jacoco/index.html`, select the `com.easyservice.backend.service` package, and read the Branch column. The raw CSV is `backend/target/site/jacoco/jacoco.csv`.
+
+### 5. Build the Discovery Service
+```bash
+cd easyservice-discovery
+mvn clean test
+```
+
+This module includes a JaCoCo report and tests for the typed marketplace listing model, including optional latitude and longitude values from public-source metadata.
 
 ---
 

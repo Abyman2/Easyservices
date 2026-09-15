@@ -5,6 +5,7 @@
 
   export let activeTab = 'listings';
   export let selectedCategory = 'ALL';
+  export let currentPage = null;
   export let currentTheme = 'light';
   export let toggleTheme = () => {};
   export let currentLanguage = 'en';
@@ -22,8 +23,8 @@
   $: customerBookings = getCustomerBookings($userBookings, $currentUser?.id);
   $: bookingCount = customerBookings.length;
   $: labels = currentLanguage === 'am'
-    ? { explore: 'መርምር', stays: 'መጠለያ', drive: 'መኪና', experiences: 'ተሞክሮዎች', shop: 'ግዢ', deals: 'ልዩ ቅናሾች', spin: 'የዕድል ጎማ', signIn: 'ግባ', wallets: 'የኪስ ቦርሳ', customer: 'ደንበኛ', verified: 'የተረጋገጠ መለያ', profile: 'የእኔ መገለጫ', bookings: 'የእኔ ቦታ ማስያዣዎች', passport: 'የፓስፖርት መገለጫ', wallet: 'Easy የኪስ ቦርሳ', notifications: 'ማሳወቂያዎች', tools: 'Easy መሳሪያዎች', providerHub: 'የአቅራቢ ማዕከል', available: 'ያለው ሂሳብ', add: 'ጨምር', switchAccount: 'ንቁ መለያ ይቀይሩ', darkMode: 'ጨለማ ሁነታ', lightMode: 'ብርሃን ሁነታ', logout: 'ውጣ', reminders: 'የቦታ ማስያዣ ማስታወሻዎች', noNotifications: 'ንቁ ማሳወቂያ የለም' }
-    : { explore: 'Explore', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', deals: 'Hot Deals', spin: 'Spin the Wheel', signIn: 'Sign In', wallets: 'WALLETS', customer: 'Customer', verified: 'Verified account', profile: 'My Profile', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', notifications: 'Notifications', tools: 'Easy Tools', providerHub: 'Provider Hub', available: 'Available balance', add: 'Add', switchAccount: 'Switch Active Account', darkMode: 'Dark Mode', lightMode: 'Light Mode', logout: 'Log Out', reminders: 'Booking Reminders', noNotifications: 'No active notifications' };
+    ? { explore: 'መርምር', nearby: 'በአቅራቢያዬ', stays: 'መጠለያ', drive: 'መኪና', experiences: 'ተሞክሮዎች', shop: 'ግዢ', deals: 'ልዩ ቅናሾች', spin: 'የዕድል ጎማ', signIn: 'ግባ', wallets: 'የኪስ ቦርሳ', customer: 'ደንበኛ', verified: 'የተረጋገጠ መለያ', profile: 'የእኔ መገለጫ', bookings: 'የእኔ ቦታ ማስያዣዎች', passport: 'የፓስፖርት መገለጫ', wallet: 'Easy የኪስ ቦርሳ', notifications: 'ማሳወቂያዎች', tools: 'Easy መሳሪያዎች', providerHub: 'የአቅራቢ ማዕከል', available: 'ያለው ሂሳብ', add: 'ጨምር', switchAccount: 'ንቁ መለያ ይቀይሩ', darkMode: 'ጨለማ ሁነታ', lightMode: 'ብርሃን ሁነታ', logout: 'ውጣ', reminders: 'የቦታ ማስያዣ ማስታወሻዎች', noNotifications: 'ንቁ ማሳወቂያ የለም' }
+    : { explore: 'Explore', nearby: 'Near Me', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', deals: 'Hot Deals', spin: 'Spin the Wheel', signIn: 'Sign In', wallets: 'WALLETS', customer: 'Customer', verified: 'Verified account', profile: 'My Profile', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', notifications: 'Notifications', tools: 'Easy Tools', providerHub: 'Provider Hub', available: 'Available balance', add: 'Add', switchAccount: 'Switch Active Account', darkMode: 'Dark Mode', lightMode: 'Light Mode', logout: 'Log Out', reminders: 'Booking Reminders', noNotifications: 'No active notifications' };
 
   // Smart notification system generated from active bookings
   $: notifications = customerBookings.flatMap((b) => {
@@ -90,11 +91,15 @@
         <Icon name="sparkles" size={15} color="var(--accent-gold)" />
         {labels.explore}
       </button>
+      <button class="nav-item nearby-nav {currentPage === 'nearby' ? 'active' : ''}" on:click={() => handleSelectNavCategory('nearby')}>
+        <Icon name="mappin" size={15} color="var(--accent-gold)" />
+        {labels.nearby}
+      </button>
       <button class="nav-item {activeTab === 'listings' && selectedCategory === 'HOTEL' ? 'active' : ''}" on:click={() => handleSelectNavCategory('HOTEL')}>
         <Icon name="bed" size={15} />
         {labels.stays}
       </button>
-      <button class="nav-item {activeTab === 'listings' && selectedCategory === 'CAR_RENTAL' ? 'active' : ''}" on:click={() => handleSelectNavCategory('CAR_RENTAL')}>
+      <button class="nav-item drive-nav {activeTab === 'listings' && selectedCategory === 'CAR_RENTAL' ? 'active' : ''}" on:click={() => handleSelectNavCategory('CAR_RENTAL')}>
         <Icon name="car" size={15} />
         {labels.drive}
       </button>
@@ -515,6 +520,8 @@
     color: #fff;
     width: 30px;
     height: 30px;
+    flex: 0 0 30px;
+    box-sizing: border-box;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -779,9 +786,15 @@
       height: 36px;
     }
 
+    .user-pill {
+      padding: 4px;
+      justify-content: center;
+    }
+
     .user-avatar {
       width: 27px;
       height: 27px;
+      flex-basis: 27px;
     }
 
     .nav-links .nav-item {
@@ -799,6 +812,8 @@
     .nav-links { gap: 0; overflow-x: visible; }
     .nav-links .nav-item { display: none; padding-inline: 10px; font-size: 0.8rem; }
     .nav-links .nav-item:first-child { display: flex; }
+    .nav-links .nearby-nav { display: flex !important; }
+    .nav-links .drive-nav { display: none !important; }
     .marketing-link { display: inline-flex; margin-left: 2px; padding-inline: 8px; font-size: 0.78rem; }
     .hot-deals-badge { width: 21px; height: 21px; }
 

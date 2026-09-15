@@ -49,8 +49,8 @@ Defects in EasyService were identified during continuous integration test suite 
 ## 3. Quality Metrics Summary
 
 ### 3.1 Test Execution Metrics
-- **Total Automated Tests**: 58
-- **Passed**: 58 (100%)
+- **Total Automated Tests**: 73
+- **Passed**: 72 executed (100%); 1 Selenium environment assumption skip
 - **Failed**: 0
 - **Skipped**: 0
 

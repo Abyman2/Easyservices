@@ -266,6 +266,9 @@ public class PublicSourceCrawler {
         String sourceUrl = website == null ? pageUrl : website;
         String id = stableId(source.category(), name, sourceUrl);
         String priceSource = price == null ? "NOT_PUBLISHED" : "PUBLISHED_SOURCE";
+        Map<String, Object> geo = map(m.get("geo"));
+        Double latitude = number(geo.get("latitude"));
+        Double longitude = number(geo.get("longitude"));
 
         return new MarketplaceListing(
                 id,
@@ -288,8 +291,16 @@ public class PublicSourceCrawler {
                 pageUrl,
                 Instant.now(),
                 List.of("live-source", source.name()),
-                images
+                images,
+                latitude,
+                longitude
         );
+    }
+
+    private Double number(Object value) {
+        if (value instanceof Number number) return number.doubleValue();
+        if (value == null) return null;
+        try { return Double.parseDouble(String.valueOf(value)); } catch (NumberFormatException ignored) { return null; }
     }
 
     private boolean allowedByRobots(String targetUrl) {

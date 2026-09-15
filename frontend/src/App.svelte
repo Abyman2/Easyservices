@@ -97,6 +97,29 @@
   let sitePage = null;
   let newsletterMessage = '';
   let currency = 'ETB';
+  let urgencyNow = Date.now();
+
+  const hotDeals = [
+    { listingId: 'h_prov_1', title: 'Kuriftu Weekend Lakeside Deal', promoCode: 'SUMMER20', discount: 20, endsAt: '2026-09-20T23:59:59', label: 'Weekend hotel offer' },
+    { listingId: 'c_prov_1', title: 'Highland Safari Special', promoCode: 'GOLD15', discount: 15, endsAt: '2026-09-19T23:59:59', label: 'Limited car rental offer' },
+    { listingId: 'e_prov_1', title: 'African Jazz Early Bird Pass', promoCode: 'ETHIO30', discount: 30, endsAt: '2026-09-21T23:59:59', label: 'Early bird event offer' }
+  ];
+
+  $: activeHotDeals = hotDeals
+    .map((deal) => ({ ...deal, listing: listings.find((listing) => listing.id === deal.listingId) }))
+    .filter((deal) => deal.listing && new Date(deal.endsAt).getTime() > urgencyNow);
+
+  function formatDealCountdown(endsAt) {
+    const remaining = Math.max(0, new Date(endsAt).getTime() - urgencyNow);
+    const totalSeconds = Math.floor(remaining / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return days > 0
+      ? `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`
+      : `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
 
   function persistProviderInventory(listingId, quantity, variantId = null) {
     providerPublishedListings = providerPublishedListings.map((listing) =>
@@ -125,8 +148,8 @@
   }
 
   $: footerLabels = currentLanguage === 'am'
-    ? { providerEyebrow: 'የEasyService ማህበረሰብን ይቀላቀሉ', providerTitle: 'የተረጋገጠ አቅራቢ ይሁኑ', providerDesc: 'ሆቴልዎን፣ መኪናዎን፣ ዝግጅትዎን፣ ልምድዎን ወይም ምርቶችዎን ይዘርዝሩ እና በመላው ኢትዮጵያ ያሉ የተረጋገጡ ደንበኞችን ያግኙ።', verified: 'የተረጋገጠ የገበያ ቦታ', reachCustomers: 'የታመኑ ደንበኞችን ያግኙ', management: 'ቀላል አስተዳደር', managementDesc: 'ለመዘርዘር እና ለማስተዳደር ቀላል መሳሪያዎች', securePayments: 'የተጠበቁ ክፍያዎች', paymentsDesc: 'የማሳያ ክፍያዎች እና ክፍያ መቀበያዎች', growth: 'የደንበኛ እድገት', growthDesc: 'ንግድዎን በየቀኑ ያሳድጉ', become: 'አቅራቢ ይሁኑ', how: 'እንዴት እንደሚሰራ', free: 'መቀላቀል ነፃ ነው እና መጀመር ቀላል ነው።', activeProviders: 'ንቁ አቅራቢዎች', growing: 'በመላው ኢትዮጵያ አብረን እያደግን ነው', description: 'የኢትዮጵያ የታመነ የመኖሪያ፣ የመጓጓዣ፣ የልምድ፣ የዝግጅት እና የእውነተኛ ምርቶች የገበያ ቦታ።', discover: 'ያግኙ', customers: 'ለደንበኞች', providers: 'ለአቅራቢዎች', destinations: 'መዳረሻዎች', company: 'ድርጅት', explore: 'መርምር', stays: 'መኖሪያዎች', drive: 'መኪና', experiences: 'ልምዶች', shop: 'ግዢ', bookings: 'የእኔ ቦታ ማስያዣዎች', passport: 'የፓስፖርት መገለጫ', wallet: 'Easy የኪስ ቦርሳ', help: 'እርዳታ እና ድጋፍ', providerHub: 'የአቅራቢ ማዕከል', listService: 'አገልግሎት ይዘርዝሩ', support: 'የአቅራቢ ድጋፍ', about: 'ስለ EasyService', trust: 'እምነት እና ደህንነት', terms: 'ውሎች', privacy: 'ግላዊነት', stayConnected: 'ግንኙነታችሁን ይቀጥሉ', deals: 'ምርጥ ቅናሾችን እና የአካባቢ ግኝቶችን ያግኙ።', email: 'ኢሜይልዎን ያስገቡ', subscribe: 'ይመዝገቡ', app: 'መተግበሪያችንን ያውርዱ', secure: 'የተረጋገጠ እና የተጠበቀ', secureDesc: 'ሁሉም አቅራቢዎች ለደህንነትዎ ተረጋግጠዋል', support24: '24/7 ድጋፍ', supportDesc: 'እርዳታ በሚፈልጉበት ጊዜ ሁሉ እዚህ ነን', made: 'በኢትዮጵያ የተሰራ', discovery: 'የህዝብ ምንጭ ፍለጋ', discovered: 'የተገኙ ንግዶች', found: 'ተገኝተዋል', searching: 'በመፈለግ ላይ', discoveryDesc: 'ከህዝብ ምንጮች የተገኙ ንግዶች። እነዚህ የEasyService አቅራቢዎች አይደሉም እና በEasyService ሊያዙ አይችሉም።', allBusinesses: 'ሁሉም የተረጋገጡ ንግዶች', verifiedListed: 'የተረጋገጡ አቅራቢዎች ተዘርዝረዋል', sortBy: 'ደርድር በ', recommended: 'የሚመከር', priceLow: 'ዋጋ፡ ከዝቅተኛ ወደ ከፍተኛ', priceHigh: 'ዋጋ፡ ከፍተኛ ወደ ዝቅተኛ', reset: 'ሁሉንም ማጣሪያዎች ዳግም አስጀምር' }
-    : { providerEyebrow: 'JOIN THE EASYSERVICE COMMUNITY', providerTitle: 'Become a Verified Provider', providerDesc: 'List your hotel, vehicle, event, experience, or products and reach thousands of verified customers across Ethiopia.', verified: 'Verified Marketplace', reachCustomers: 'Reach trusted customers', management: 'Easy Management', managementDesc: 'Simple tools to list and manage', securePayments: 'Secure Payments', paymentsDesc: 'Simulated payments and payouts', growth: 'Customer Growth', growthDesc: 'Grow your business every day', become: 'Become a Provider', how: 'How It Works', free: "It's free to join and easy to get started.", activeProviders: 'Active Providers', growing: 'Growing together across Ethiopia', description: "Ethiopia's trusted marketplace for stays, transportation, experiences, events, and authentic products.", discover: 'Discover', customers: 'For Customers', providers: 'For Providers', destinations: 'Destinations', company: 'Company', explore: 'Explore', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', help: 'Help & Support', providerHub: 'Provider Hub', listService: 'List a Service', support: 'Provider Support', about: 'About EasyService', trust: 'Trust & Safety', terms: 'Terms', privacy: 'Privacy', stayConnected: 'Stay Connected', deals: 'Get the best deals and local discoveries.', email: 'Enter your email', subscribe: 'Subscribe', app: 'Download our app', secure: 'Verified & Secure', secureDesc: 'All providers are verified for your safety and trust', support24: '24/7 Support', supportDesc: "We're here anytime you need help", made: 'Made in Ethiopia', discovery: 'PUBLIC SOURCE DISCOVERY', discovered: 'Discovered Businesses', found: 'found', searching: 'searching', discoveryDesc: 'Businesses found from public sources. These are not EasyService providers and are not bookable through EasyService.', allBusinesses: 'All Verified Businesses', verifiedListed: 'verified business providers listed', sortBy: 'Sort by', recommended: 'Recommended', priceLow: 'Price: Low to High', priceHigh: 'Price: High to Low', reset: 'Reset All Filters' };
+    ? { providerEyebrow: 'የEasyService ማህበረሰብን ይቀላቀሉ', providerTitle: 'የተረጋገጠ አቅራቢ ይሁኑ', providerDesc: 'ሆቴልዎን፣ መኪናዎን፣ ዝግጅትዎን፣ ልምድዎን ወይም ምርቶችዎን ይዘርዝሩ እና በመላው ኢትዮጵያ ያሉ የተረጋገጡ ደንበኞችን ያግኙ።', verified: 'የተረጋገጠ የገበያ ቦታ', reachCustomers: 'የታመኑ ደንበኞችን ያግኙ', management: 'ቀላል አስተዳደር', managementDesc: 'ለመዘርዘር እና ለማስተዳደር ቀላል መሳሪያዎች', securePayments: 'የተጠበቁ ክፍያዎች', paymentsDesc: 'የማሳያ ክፍያዎች እና ክፍያ መቀበያዎች', growth: 'የደንበኛ እድገት', growthDesc: 'ንግድዎን በየቀኑ ያሳድጉ', become: 'አቅራቢ ይሁኑ', how: 'እንዴት እንደሚሰራ', free: 'መቀላቀል ነፃ ነው እና መጀመር ቀላል ነው።', activeProviders: 'ንቁ አቅራቢዎች', growing: 'በመላው ኢትዮጵያ አብረን እያደግን ነው', description: 'የኢትዮጵያ የታመነ የመኖሪያ፣ የመጓጓዣ፣ የልምድ፣ የዝግጅት እና የእውነተኛ ምርቶች የገበያ ቦታ።', discover: 'ያግኙ', customers: 'ለደንበኞች', providers: 'ለአቅራቢዎች', destinations: 'መዳረሻዎች', company: 'ድርጅት', explore: 'መርምር', stays: 'መኖሪያዎች', drive: 'መኪና', experiences: 'ልምዶች', shop: 'ግዢ', bookings: 'የእኔ ቦታ ማስያዣዎች', passport: 'የፓስፖርት መገለጫ', wallet: 'Easy የኪስ ቦርሳ', help: 'እርዳታ እና ድጋፍ', providerHub: 'የአቅራቢ ማዕከል', listService: 'አገልግሎት ይዘርዝሩ', support: 'የአቅራቢ ድጋፍ', about: 'ስለ EasyService', trust: 'እምነት እና ደህንነት', weekly: 'EasyService Weekly', updates: 'EasyService Updates', terms: 'ውሎች', privacy: 'ግላዊነት', stayConnected: 'ግንኙነታችሁን ይቀጥሉ', deals: 'ምርጥ ቅናሾችን እና የአካባቢ ግኝቶችን ያግኙ።', email: 'ኢሜይልዎን ያስገቡ', subscribe: 'ይመዝገቡ', app: 'መተግበሪያችንን ያውርዱ', secure: 'የተረጋገጠ እና የተጠበቀ', secureDesc: 'ሁሉም አቅራቢዎች ለደህንነትዎ ተረጋግጠዋል', support24: '24/7 ድጋፍ', supportDesc: 'እርዳታ በሚፈልጉበት ጊዜ ሁሉ እዚህ ነን', made: 'በኢትዮጵያ የተሰራ', discovery: 'የህዝብ ምንጭ ፍለጋ', discovered: 'የተገኙ ንግዶች', found: 'ተገኝተዋል', searching: 'በመፈለግ ላይ', discoveryDesc: 'ከህዝብ ምንጮች የተገኙ ንግዶች። እነዚህ የEasyService አቅራቢዎች አይደሉም እና በEasyService ሊያዙ አይችሉም።', allBusinesses: 'ሁሉም የተረጋገጡ ንግዶች', verifiedListed: 'የተረጋገጡ አቅራቢዎች ተዘርዝረዋል', sortBy: 'ደርድር በ', recommended: 'የሚመከር', priceLow: 'ዋጋ፡ ከዝቅተኛ ወደ ከፍተኛ', priceHigh: 'ዋጋ፡ ከፍተኛ ወደ ዝቅተኛ', reset: 'ሁሉንም ማጣሪያዎች ዳግም አስጀምር' }
+    : { providerEyebrow: 'JOIN THE EASYSERVICE COMMUNITY', providerTitle: 'Become a Verified Provider', providerDesc: 'List your hotel, vehicle, event, experience, or products and reach thousands of verified customers across Ethiopia.', verified: 'Verified Marketplace', reachCustomers: 'Reach trusted customers', management: 'Easy Management', managementDesc: 'Simple tools to list and manage', securePayments: 'Secure Payments', paymentsDesc: 'Simulated payments and payouts', growth: 'Customer Growth', growthDesc: 'Grow your business every day', become: 'Become a Provider', how: 'How It Works', free: "It's free to join and easy to get started.", activeProviders: 'Active Providers', growing: 'Growing together across Ethiopia', description: "Ethiopia's trusted marketplace for stays, transportation, experiences, events, and authentic products.", discover: 'Discover', customers: 'For Customers', providers: 'For Providers', destinations: 'Destinations', company: 'Company', explore: 'Explore', stays: 'Stays', drive: 'Drive', experiences: 'Experiences', shop: 'Shop', bookings: 'My Bookings', passport: 'Passport Profile', wallet: 'Easy Wallet', help: 'Help & Support', providerHub: 'Provider Hub', listService: 'List a Service', support: 'Provider Support', about: 'About EasyService', trust: 'Trust & Safety', weekly: 'EasyService Weekly', updates: 'EasyService Updates', terms: 'Terms', privacy: 'Privacy', stayConnected: 'Stay Connected', deals: 'Get the best deals and local discoveries.', email: 'Enter your email', subscribe: 'Subscribe', app: 'Download our app', secure: 'Verified & Secure', secureDesc: 'All providers are verified for your safety and trust', support24: '24/7 Support', supportDesc: "We're here anytime you need help", made: 'Made in Ethiopia', discovery: 'PUBLIC SOURCE DISCOVERY', discovered: 'Discovered Businesses', found: 'found', searching: 'searching', discoveryDesc: 'Businesses found from public sources. These are not EasyService providers and are not bookable through EasyService.', allBusinesses: 'All Verified Businesses', verifiedListed: 'verified business providers listed', sortBy: 'Sort by', recommended: 'Recommended', priceLow: 'Price: Low to High', priceHigh: 'Price: High to Low', reset: 'Reset All Filters' };
 
   const accommodationTypes = ['Hotel', 'Guesthouse', 'Resort', 'Lodge', 'Villa', 'Hostel'];
   const roomTypes = ['Single Room', 'Double Room', 'Twin Room', 'Standard Room', 'Deluxe Room', 'Superior Room', 'Family Room', 'Executive Room', 'Studio', 'Apartment', 'Junior Suite', 'Executive Suite', 'Presidential Suite', 'Villa', 'Bungalow', 'Cottage', 'Guesthouse Room', 'Dormitory Bed', 'Entire Guesthouse', 'Resort Villa'];
@@ -343,6 +366,9 @@
   }
 
   onMount(async () => {
+    const urgencyTimer = window.setInterval(() => {
+      urgencyNow = Date.now();
+    }, 1000);
     const savedTheme = localStorage.getItem('easyservice_theme') || 'light';
     const savedLanguage = localStorage.getItem('easyservice_language') || 'en';
     const savedCurrency = localStorage.getItem('easyservice_currency') || 'ETB';
@@ -372,6 +398,7 @@
     const catalog = data && data.length > 0 ? data : mockProviders;
     const savedIds = new Set(providerPublishedListings.map((listing) => listing.id));
     listings = [...providerPublishedListings, ...catalog.filter((listing) => !savedIds.has(listing.id))];
+    handleHashNavigation();
     await syncBackendBookings($currentUser);
 
     const handleBrowserBack = () => {
@@ -394,14 +421,16 @@
     window.addEventListener('popstate', handleBrowserBack);
 
     return () => {
+      window.clearInterval(urgencyTimer);
       window.removeEventListener('hashchange', handleHashNavigation);
       window.removeEventListener('popstate', handleBrowserBack);
     };
   });
 
   function handleHashNavigation() {
+    if (handleListingPathNavigation()) return;
     const hash = window.location.hash.replace(/^#/, '');
-    const sitePages = ['explore', 'stays', 'drive', 'experiences', 'shop', 'bookings', 'passport', 'wallet', 'help', 'provider-support', 'become-provider', 'provider', 'list-service', 'addis', 'bishoftu', 'hawassa', 'lalibela', 'bahir-dar', 'about', 'how-it-works', 'trust', 'terms', 'privacy'];
+    const sitePages = ['explore', 'nearby', 'stays', 'drive', 'experiences', 'shop', 'bookings', 'passport', 'wallet', 'help', 'provider-support', 'become-provider', 'provider', 'list-service', 'addis', 'bishoftu', 'hawassa', 'lalibela', 'bahir-dar', 'about', 'how-it-works', 'trust', 'terms', 'privacy', 'weekly', 'updates'];
     const hashCategories = { explore: 'ALL', stays: 'HOTEL', drive: 'CAR_RENTAL', experiences: 'EVENT', shop: 'STORE' };
     if (hash.startsWith('listing-')) {
       const listingId = hash.slice('listing-'.length);
@@ -448,6 +477,46 @@
       activeTab = 'listings';
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }
+  }
+
+  function slugify(value) {
+    return String(value || '')
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function listingPath(listing) {
+    const categoryPath = {
+      HOTEL: 'hotels',
+      CAR_RENTAL: 'cars',
+      EVENT: 'events',
+      STORE: 'shops'
+    }[listing?.category] || 'businesses';
+    const location = slugify(listing?.location || 'ethiopia').split('-')[0] || 'ethiopia';
+    return `/${categoryPath}/${location}/${slugify(listing?.title || listing?.id)}`;
+  }
+
+  function handleListingPathNavigation() {
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    if (path === '/' || path === '/index.html') return false;
+
+    const parts = path.split('/').filter(Boolean);
+    if (parts.length !== 3) return false;
+
+    const category = { hotels: 'HOTEL', cars: 'CAR_RENTAL', events: 'EVENT', shops: 'STORE' }[parts[0]];
+    if (!category) return false;
+
+    const listing = listings.find((item) => item.category === category && slugify(item.title) === parts[2]);
+    if (!listing) return false;
+
+    selectedProviderListing = localizeListing(listing);
+    sitePage = null;
+    activeTab = 'listings';
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    return true;
   }
 
   function navigateToSitePage(page) {
@@ -572,6 +641,9 @@
         phone: item.phone,
         priceSource: item.priceSource,
         currency: item.currency,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        distanceKm: item.distanceKm,
         lastChecked: item.lastChecked,
         tags: item.tags || [],
         variants: []
@@ -700,6 +772,30 @@
   $: displayedFavoritedListings = favoritedListings.map(localizeListing);
 
   $: trendingListings = listings.slice(0, 3);
+  $: seoListing = selectedProviderListing;
+  $: seoTitle = seoListing
+    ? `${seoListing.title} in ${seoListing.location || 'Ethiopia'} | EasyService`
+    : 'EasyService Ethiopia | Hotels, Cars, Events and Local Businesses';
+  $: seoDescription = seoListing
+    ? `${seoListing.title} in ${seoListing.location || 'Ethiopia'}. Compare verified availability, pricing and booking options on EasyService.`
+    : 'Discover verified hotels, car rentals, events and local businesses across Ethiopia with EasyService.';
+  $: seoCanonical = seoListing ? `https://easyservice.et${listingPath(seoListing)}` : 'https://easyservice.et/';
+  $: seoSchema = seoListing ? {
+    '@context': 'https://schema.org',
+    '@type': seoListing.category === 'HOTEL' ? 'Hotel' : seoListing.category === 'EVENT' ? 'Event' : 'Product',
+    name: seoListing.title,
+    description: seoListing.description,
+    image: seoListing.imageUrl,
+    url: seoCanonical,
+    address: { '@type': 'PostalAddress', addressLocality: seoListing.location || 'Ethiopia', addressCountry: 'ET' },
+    offers: seoListing.price > 0 ? {
+      '@type': 'Offer',
+      priceCurrency: 'ETB',
+      price: Number(seoListing.price),
+      availability: Number(seoListing.availableQuantity) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: seoCanonical
+    } : undefined
+  } : null;
 
   // Customer Profile Spending Analytics
   $: hotelBookings = customerBookings.filter(b => b.category === 'HOTEL' && b.status === 'CONFIRMED');
@@ -873,6 +969,7 @@
       : {};
     listingReturnState = {
       hash: window.location.hash,
+      path: window.location.pathname,
       scrollY: window.scrollY,
       category: selectedCategory,
       location: selectedLocation,
@@ -884,7 +981,7 @@
     window.history.pushState(
       { easyServiceListing: true, returnState: listingReturnState },
       '',
-      `#listing-${listing.id}`
+      listingPath(listing)
     );
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }
@@ -893,9 +990,10 @@
     const returnState = listingReturnState || window.history.state?.returnState;
     selectedProviderListing = null;
     listingReturnState = null;
-    if (window.location.hash.startsWith('#listing-')) {
+    if (window.location.pathname.split('/').filter(Boolean).length === 3 || window.location.hash.startsWith('#listing-')) {
       const returnHash = returnState?.hash || '';
-      window.history.replaceState({}, '', `${window.location.pathname}${window.location.search}${returnHash}`);
+      const returnPath = returnState?.path || '/';
+      window.history.replaceState({}, '', `${returnPath}${returnHash}`);
     }
     selectedCategory = returnState?.category || selectedCategory;
     selectedLocation = returnState?.location || selectedLocation;
@@ -905,8 +1003,8 @@
 
   function clearListingDetail() {
     selectedProviderListing = null;
-    if (window.location.hash.startsWith('#listing-')) {
-      window.history.replaceState({}, '', `${window.location.pathname}${window.location.search}`);
+    if (window.location.hash.startsWith('#listing-') || window.location.pathname.split('/').filter(Boolean).length === 3) {
+      window.history.replaceState({}, '', '/');
     }
   }
 
@@ -933,6 +1031,20 @@
     handleSelectCategory(cat);
     setTimeout(scrollToResults, 50);
   }
+  function handleNavbarNavigation(target) {
+    if (target === 'nearby') {
+      navigateToSitePage('nearby');
+      return;
+    }
+    goToCategory(target);
+  }
+
+  function openDiscoveredListingFromPage(listing) {
+    sitePage = null;
+    activeTab = 'listings';
+    selectedDiscoveredListing = listing;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }
 
   function goToLocation(locId) {
     activeTab = 'listings';
@@ -947,6 +1059,16 @@
     void handleDiscoverySearch();
   }
 </script>
+
+<svelte:head>
+  <html lang={currentLanguage === 'am' ? 'am' : 'en'} />
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
+  <link rel="canonical" href={seoCanonical} />
+  {#if seoSchema}
+    <script type="application/ld+json">{@html JSON.stringify(seoSchema)}</script>
+  {/if}
+</svelte:head>
 
 <main class="app-container">
   <!-- Category Switcher Transition Banner Animation -->
@@ -982,7 +1104,8 @@
   <Navbar 
     bind:activeTab 
     bind:selectedCategory 
-    onNavigate={goToCategory}
+    onNavigate={handleNavbarNavigation}
+    currentPage={sitePage}
     {currentTheme} 
     {toggleTheme} 
     {currentLanguage}
@@ -1001,6 +1124,7 @@
         page={sitePage}
         currentUser={$currentUser}
         listings={listings.map(localizeListing)}
+        discoveredListings={discoveredListings.map(localizeListing)}
         bookings={customerBookings}
         currentLanguage={currentLanguage}
         currency={currency}
@@ -1010,6 +1134,7 @@
         on:provider={() => navigateToSitePage('provider')}
         on:walletTopUp={(event) => handleWalletTopUp(event.detail)}
         on:openListing={(event) => openListing(event.detail)}
+        on:openDiscoveredListing={(event) => openDiscoveredListingFromPage(event.detail)}
       />
     {:else if activeTab === 'listings'}
       {#if selectedProviderListing}
@@ -1415,83 +1540,39 @@
         </div>
 
         <div class="deals-grid">
-          <!-- Deal 1 -->
-          <div class="marketplace-card deal-card">
-            <div class="deal-badge-overlay">20% OFF</div>
-            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Kuriftu Resort Deal" class="deal-img" />
-            <div class="deal-body">
-              <span class="deal-category">🏨 HOTEL RESORT DEAL</span>
-              <h3>🔥 Kuriftu Weekend Lakeside Deal</h3>
-              <p class="deal-host">Kuriftu Resort & Spa Bishoftu</p>
-              
-              <div class="timer-box">
-                <span>Ends in:</span>
-                <strong class="timer-val">02d 14h 32m</strong>
-              </div>
+          {#each activeHotDeals as deal}
+            {@const listing = deal.listing}
+            {@const discountedPrice = Number(listing.price || 0) * (1 - deal.discount / 100)}
+            <div class="marketplace-card deal-card">
+              <div class="deal-badge-overlay">{deal.discount}% OFF</div>
+              <img src={listing.imageUrl} alt={listing.title} class="deal-img" />
+              <div class="deal-body">
+                <span class="deal-category">{deal.label}</span>
+                <h3>{listing.title}</h3>
+                <p class="deal-host">{listing.hostName || listing.location}</p>
 
-              <div class="deal-price-row">
-                <div class="price-strikethrough-box">
-                  <span class="orig-price">ETB 5,000</span>
-                  <span class="discounted-price">ETB 4,000 / night</span>
+                <div class="timer-box">
+                  <span>Offer ends in</span>
+                  <strong class="timer-val">{formatDealCountdown(deal.endsAt)}</strong>
                 </div>
-                <button class="btn-gold" on:click={() => { selectedListing = { ...mockProviders[0], title: '🔥 Kuriftu Weekend Lakeside Deal', price: 5000, preAppliedPromo: 'SUMMER20' }; }}>
-                  Book Deal →
-                </button>
+
+                <div class="deal-signal-row">
+                  <span>{listing.availableQuantity} {listing.category === 'HOTEL' ? 'rooms' : listing.category === 'CAR_RENTAL' ? 'cars' : 'passes'} remaining</span>
+                  <span>{listing.location}</span>
+                </div>
+
+                <div class="deal-price-row">
+                  <div class="price-strikethrough-box">
+                    <span class="orig-price">ETB {Number(listing.price || 0).toLocaleString()}</span>
+                    <span class="discounted-price">ETB {discountedPrice.toLocaleString()} {listing.category === 'HOTEL' ? '/ night' : listing.category === 'CAR_RENTAL' ? '/ day' : '/ pass'}</span>
+                  </div>
+                  <button class="btn-gold" on:click={() => { selectedListing = { ...listing, title: `🔥 ${deal.title}`, preAppliedPromo: deal.promoCode }; }}>
+                    Book Deal →
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-
-          <!-- Deal 2 -->
-          <div class="marketplace-card deal-card">
-            <div class="deal-badge-overlay">15% OFF</div>
-            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80" alt="Car Rental Safari Deal" class="deal-img" />
-            <div class="deal-body">
-              <span class="deal-category">🚗 CAR RENTAL DEAL</span>
-              <h3>🔥 5-Day Highland Safari Special</h3>
-              <p class="deal-host">Kebede 4×4 Offroad Rentals</p>
-              
-              <div class="timer-box">
-                <span>Ends in:</span>
-                <strong class="timer-val">01d 08h 15m</strong>
-              </div>
-
-              <div class="deal-price-row">
-                <div class="price-strikethrough-box">
-                  <span class="orig-price">ETB 3,500</span>
-                  <span class="discounted-price">ETB 2,975 / day</span>
-                </div>
-                <button class="btn-gold" on:click={() => { selectedListing = { ...mockProviders[7], title: '🔥 5-Day Highland Safari Special', price: 3500, preAppliedPromo: 'GOLD15' }; }}>
-                  Book Deal →
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Deal 3 -->
-          <div class="marketplace-card deal-card">
-            <div class="deal-badge-overlay">30% OFF</div>
-            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80" alt="African Jazz Fest Deal" class="deal-img" />
-            <div class="deal-body">
-              <span class="deal-category">🎟 EVENT FESTIVAL DEAL</span>
-              <h3>🔥 African Jazz Early Bird VIP Pass</h3>
-              <p class="deal-host">Addis Music Festival Org</p>
-              
-              <div class="timer-box">
-                <span>Ends in:</span>
-                <strong class="timer-val">04d 18h 45m</strong>
-              </div>
-
-              <div class="deal-price-row">
-                <div class="price-strikethrough-box">
-                  <span class="orig-price">ETB 1,500</span>
-                  <span class="discounted-price">ETB 1,050 / pass</span>
-                </div>
-                <button class="btn-gold" on:click={() => { selectedListing = { ...mockProviders[14], title: '🔥 African Jazz Early Bird VIP Pass', price: 1500, preAppliedPromo: 'ETHIO30' }; }}>
-                  Book Deal →
-                </button>
-              </div>
-            </div>
-          </div>
+          {/each}
         </div>
       </section>
 
@@ -2087,7 +2168,7 @@
       <div class="footer-col">
         <h4>{footerLabels.company}</h4>
         <ul>
-          <li><a href="#about" on:click|preventDefault={() => navigateToSitePage('about')}>{footerLabels.about}</a></li><li><a href="#how-it-works" on:click|preventDefault={() => navigateToSitePage('how-it-works')}>{footerLabels.how}</a></li><li><a href="#trust" on:click|preventDefault={() => navigateToSitePage('trust')}>{footerLabels.trust}</a></li><li><a href="#terms" on:click|preventDefault={() => navigateToSitePage('terms')}>{footerLabels.terms}</a></li><li><a href="#privacy" on:click|preventDefault={() => navigateToSitePage('privacy')}>{footerLabels.privacy}</a></li>
+          <li><a href="#about" on:click|preventDefault={() => navigateToSitePage('about')}>{footerLabels.about}</a></li><li><a href="#how-it-works" on:click|preventDefault={() => navigateToSitePage('how-it-works')}>{footerLabels.how}</a></li><li><a href="#trust" on:click|preventDefault={() => navigateToSitePage('trust')}>{footerLabels.trust}</a></li><li><a href="#weekly" on:click|preventDefault={() => navigateToSitePage('weekly')}>{footerLabels.weekly}</a></li><li><a href="#updates" on:click|preventDefault={() => navigateToSitePage('updates')}>{footerLabels.updates}</a></li><li><a href="#terms" on:click|preventDefault={() => navigateToSitePage('terms')}>{footerLabels.terms}</a></li><li><a href="#privacy" on:click|preventDefault={() => navigateToSitePage('privacy')}>{footerLabels.privacy}</a></li>
         </ul>
       </div>
 

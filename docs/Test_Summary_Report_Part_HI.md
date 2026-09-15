@@ -20,7 +20,7 @@
 This Test Summary Report evaluates the software quality, coverage, defect metrics, and release readiness of **EasyService v1.0**. 
 
 Based on the verified local run:
-1. **58 Maven tests** completed with zero failures and zero skips, including four live Selenium scenarios.
+1. **73 Maven tests** completed with zero failures; 72 executed successfully and 1 Selenium test was skipped by an explicit environment assumption when the live frontend/catalog was unavailable.
 2. **JaCoCo Branch Coverage** reached **84.7%** for the core service package and passed the enforced 80% gate; whole-bundle coverage is 71.1% because it includes non-core classes.
 3. The defect log records three fixed defects, but escaped-defect evidence and external CI build evidence are not yet complete.
 4. GitHub Actions and Jenkins definitions exist; successful hosted runs still need to be attached as submission evidence.

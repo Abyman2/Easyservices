@@ -43,6 +43,14 @@
   $: categoryTag = listing.categoryLabel || categoryNames[listing.category] || listing.category;
   $: locationDisplay = listing.location || 'Addis Ababa';
   $: isSoldOut = listing.availableQuantity <= 0;
+  $: lowInventoryThreshold = Math.max(2, Math.ceil(Number(listing.capacity || 0) * 0.25));
+  $: urgencyLabel = isSoldOut
+    ? 'Fully booked'
+    : Number(listing.availableQuantity) <= lowInventoryThreshold
+      ? `${listing.availableQuantity} remaining for this date`
+      : listing.viewCount
+        ? `${listing.viewCount} people viewed this today`
+        : '';
 
   function getEventState(dateValue) {
     if (!dateValue) return { label: 'Date not listed', className: 'event-unknown' };
@@ -141,6 +149,13 @@
         {isSoldOut ? '0 Remaining' : `${listing.availableQuantity} available`}
       </span>
     </div>
+
+    {#if urgencyLabel}
+      <div class="urgency-row {isSoldOut ? 'urgency-depleted' : ''}">
+        <Icon name={isSoldOut ? 'lock' : 'clock'} size={13} />
+        <span>{urgencyLabel}</span>
+      </div>
+    {/if}
 
     <!-- Price Hierarchy & Action Button -->
     <div class="card-footer-row">
@@ -335,6 +350,19 @@
 
   .availability-tag.depleted {
     color: var(--accent-terracotta);
+  }
+
+  .urgency-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--accent-terracotta);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  .urgency-depleted {
+    color: var(--text-muted);
   }
 
   .card-footer-row {

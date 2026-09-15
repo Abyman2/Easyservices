@@ -24,7 +24,9 @@ public record MarketplaceListing(
         String sourceUrl,
         Instant lastChecked,
         List<String> tags,
-        List<String> imageUrls
+        List<String> imageUrls,
+        Double latitude,
+        Double longitude
 ) {
 
     /**
@@ -76,7 +78,37 @@ public record MarketplaceListing(
                 tags,
                 imageUrl == null || imageUrl.isBlank()
                         ? List.of()
-                        : List.of(imageUrl)
+                        : List.of(imageUrl),
+                null,
+                null
         );
     }
+
+        public MarketplaceListing(
+                        String id,
+                        String name,
+                        ListingCategory category,
+                        String country,
+                        String city,
+                        String area,
+                        String address,
+                        String description,
+                        String website,
+                        String phone,
+                        String imageUrl,
+                        String price,
+                        String currency,
+                        String priceUnit,
+                        String priceSource,
+                        SourceType sourceType,
+                        String sourceName,
+                        String sourceUrl,
+                        Instant lastChecked,
+                        List<String> tags,
+                        List<String> imageUrls
+        ) {
+                this(id, name, category, country, city, area, address, description, website, phone,
+                                imageUrl, price, currency, priceUnit, priceSource, sourceType, sourceName,
+                                sourceUrl, lastChecked, tags, imageUrls, null, null);
+        }
 }
