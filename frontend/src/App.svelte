@@ -100,7 +100,7 @@
   let urgencyNow = Date.now();
 
   const hotDeals = [
-    { listingId: 'h_prov_1', title: 'Kuriftu Weekend Lakeside Deal', promoCode: 'SUMMER20', discount: 20, endsAt: '2026-09-20T23:59:59', label: 'Weekend hotel offer' },
+    { listingId: 'h_prov_1', title: 'Kuriftu Weekend Lakeside Deal', promoCode: 'AAU10', discount: 10, endsAt: '2026-09-20T23:59:59', label: 'Weekend hotel offer' },
     { listingId: 'c_prov_1', title: 'Highland Safari Special', promoCode: 'GOLD15', discount: 15, endsAt: '2026-09-19T23:59:59', label: 'Limited car rental offer' },
     { listingId: 'e_prov_1', title: 'African Jazz Early Bird Pass', promoCode: 'ETHIO30', discount: 30, endsAt: '2026-09-21T23:59:59', label: 'Early bird event offer' }
   ];
@@ -943,6 +943,8 @@
 
   function handleCompleteBooking(bookingId) {
     markBookingCompleted(bookingId);
+    const completedBooking = $userBookings.find((booking) => booking.id === bookingId);
+    if (completedBooking) selectedBookingPass = { ...completedBooking };
   }
 
   function handleBookingReview(bookingId, rating, reviewText) {

@@ -1,5 +1,5 @@
 <script>
-  import { currentUser, activePromoCodes } from '../stores/authStore.js';
+  import { currentUser, activePromoCodes, usedWheelPromoCodes, isWheelPromoCode, consumeWheelPromoCode } from '../stores/authStore.js';
   import { addBooking, isDateRangeBooked, userBookings } from '../stores/bookingStore.js';
   import { createBooking } from '../api/api.js';
   import Icon from './Icon.svelte';
@@ -74,7 +74,8 @@
   }
 
   $: cleanCode = promoCode.trim().toUpperCase();
-  $: discountPercent = calculateDiscount(cleanCode, $activePromoCodes);
+  $: promoAlreadyUsed = isWheelPromoCode(cleanCode) && $usedWheelPromoCodes.has(cleanCode);
+  $: discountPercent = promoAlreadyUsed ? 0 : calculateDiscount(cleanCode, $activePromoCodes);
   $: isDurationCategory = listing && (listing.category === 'HOTEL' || listing.category === 'CAR_RENTAL');
   $: startLabel = listing?.category === 'HOTEL' ? 'Check-in Date' : (listing?.category === 'CAR_RENTAL' ? 'Pickup Date' : 'Booking Date');
   $: endLabel = listing?.category === 'HOTEL' ? 'Check-out Date' : (listing?.category === 'CAR_RENTAL' ? 'Return Date' : 'End Date');
@@ -106,6 +107,10 @@
 
   function goToStep2() {
     errorMsg = '';
+    if (promoAlreadyUsed) {
+      errorMsg = 'This lucky-wheel promo code has already been used. Please enter a different code.';
+      return;
+    }
     if (isSoldOut) {
       errorMsg = 'BR-07 Violation: Service is fully booked/sold out. No inventory available.';
       return;
@@ -174,6 +179,7 @@
         }
         listing.availableQuantity -= quantity;
         onBookingSuccess(listing.id, quantity, listing.variantDetails?.variantId);
+        consumeWheelPromoCode(cleanCode);
 
         const bookingId = 'ES-2026-' + Math.floor(100000 + Math.random() * 900000);
 
@@ -335,7 +341,7 @@
 
           <div class="form-group">
             <label for="promoCodeInput">{labels.promotion}</label>
-            <input id="promoCodeInput" type="text" placeholder="e.g. SUMMER20 (-20%)" bind:value={promoCode} disabled={isSoldOut} class="input-field" />
+            <input id="promoCodeInput" type="text" placeholder="e.g. SUMMER20 (example only)" bind:value={promoCode} disabled={isSoldOut} class="input-field" />
           </div>
 
           {#if discountPercent > 0}

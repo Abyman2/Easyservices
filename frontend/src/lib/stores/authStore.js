@@ -41,7 +41,7 @@ currentUser.subscribe(val => {
 
 // Central Promo Code Registry
 export const activePromoCodes = writable({
-  'SUMMER20': 20,
+  'AAU10': 10,
   'GOLD15': 15,
   'ETHIO30': 30,
   'HOTDEAL20': 20,
@@ -50,6 +50,35 @@ export const activePromoCodes = writable({
   'WELCOME10': 10,
   'GOLDEN25': 25
 });
+
+const savedUsedPromoCodes = (() => {
+  try {
+    return JSON.parse(localStorage.getItem('easyservice_used_wheel_promos') || '[]');
+  } catch {
+    return [];
+  }
+})();
+
+export const usedWheelPromoCodes = writable(new Set(savedUsedPromoCodes));
+
+usedWheelPromoCodes.subscribe((codes) => {
+  localStorage.setItem('easyservice_used_wheel_promos', JSON.stringify([...codes]));
+});
+
+export function isWheelPromoCode(code) {
+  return /^(EASY5|WIN10|GOLD25)-\d{4}$/i.test(String(code || '').trim());
+}
+
+export function consumeWheelPromoCode(code) {
+  const normalizedCode = String(code || '').trim().toUpperCase();
+  if (!isWheelPromoCode(normalizedCode)) return;
+  usedWheelPromoCodes.update((codes) => new Set([...codes, normalizedCode]));
+  activePromoCodes.update((codes) => {
+    const nextCodes = { ...codes };
+    delete nextCodes[normalizedCode];
+    return nextCodes;
+  });
+}
 
 export function registerPromoCode(code, percent) {
   if (!code) return;

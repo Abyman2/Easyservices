@@ -116,9 +116,6 @@ public class DataInitializer implements CommandLineRunner {
                 "Bole Coffee Hub, Addis Ababa", "Kifle D."));
 
         // Seed Promotions (BR-11, BR-12)
-        promotionRepository.save(new Promotion("promo_1", null, "SUMMER20", 20.0,
-                BigDecimal.valueOf(500.00), LocalDate.now().minusDays(5), LocalDate.now().plusDays(30), PromotionStatus.ACTIVE));
-
         promotionRepository.save(new Promotion("promo_2", null, "AAU10", 10.0,
                 BigDecimal.valueOf(200.00), LocalDate.now().minusDays(5), LocalDate.now().plusDays(30), PromotionStatus.ACTIVE));
 
